@@ -1,6 +1,6 @@
 # DonutTycoon
 ## Description
-Donut game.
+Donut game.  
 [Game Link](https://azhu7.github.io/DonutTycoon/)
 
 ## Reporting Issues

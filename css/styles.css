@@ -1,0 +1,109 @@
+/**
+ * Author: Alexander Zhu
+ * Date Created: March 14, 2018
+ * Description: Main stylesheet for Donut Tycoon.
+ */
+
+html {
+	overflow-y: scroll;
+}
+
+body {
+	background: url(../img/background1.jpg) no-repeat center center fixed;
+	-webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+	height: 100%;
+}
+
+#header {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+#mainContainer {
+	text-align: center;
+}
+
+#infoContainer {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	padding: 0px 20px 30px 20px;
+	font-size: 20px;
+	font-weight: bold;
+	background-color: lightblue;
+	display: inline-block;
+	overflow: auto;
+}
+
+#night {
+	display: inline-block;
+	white-space: nowrap;
+}
+
+#donutSelection {
+	display: inline-block;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.numInput {
+	border: none;
+	border-width: 0px;
+}
+
+#startDayButton {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#version {
+	clear: both;
+	font-size: 12px;
+	text-align: center;
+}
+
+
+/* -- Buttons -- */
+
+.button h3 {
+	text-align: center;
+	margin: 0px;
+}
+
+.buttonLit h3 {
+	text-align: center;
+	margin: 0px;
+}
+
+.button, .buttonLit {
+	border: 1px solid black;
+	border-radius: 5px;
+	cursor: pointer;
+	width: 15%;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
+.button {
+	background-color: #AAAAAA;
+}
+
+.buttonLit {
+	background-color: #D4DAFC;
+}
+
+.buttonLit:hover {
+	background-color: #ADBAFF;
+}
+
+.spacer {
+	width: 1%;
+}
+
+.totalCost {
+	color: 'green';
+}

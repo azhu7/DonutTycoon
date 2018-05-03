@@ -37,6 +37,23 @@ body {
 	background-color: lightblue;
 	display: inline-block;
 	overflow: auto;
+	flex: 75%;
+}
+
+#infoStream {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	font-size: 20px;
+	font-weight: bold;
+	background-color: lightgrey;
+	display: none;
+	overflow: auto;
+	flex: 25%;
+}
+
+.row {
+	display: flex;
 }
 
 #night {
@@ -55,7 +72,7 @@ body {
 	border-width: 0px;
 }
 
-#startDayButton {
+#startButton {
 	margin-left: auto;
 	margin-right: auto;
 }

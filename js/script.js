@@ -24,10 +24,23 @@ function init() {
     }
 }
 
+function flipPlayerInfo() {
+    var playerInfoTemplate = _.template($("#playerInfoTemplate").html());
+    player.gameState = player.gameState === GameState.Day ? GameState.Night : GameState.Day;
+    var prefix = player.gameState === GameState.Day ? "Day" : "Night";
+
+    var playerInfo = playerInfoTemplate({
+        day: `${prefix} ${player.day}`,
+        money: player.money
+    });
+    $("#playerInfo").html(playerInfo);
+}
+
+/** Switch to donut selectioin view. */
 function fillDonutSelection() {
     var donutInfoTemplate = _.template($("#donutInfoTemplate").html());
 
-
+    $("#donutSelection > tbody").empty();  // Clear old entries
     for (var i = 0; i < player.donuts.length; i++) {
         var donut = constants.donuts[player.donuts[i]];
         var donutInfo = donutInfoTemplate({
@@ -40,28 +53,80 @@ function fillDonutSelection() {
 
         $("#donutSelection > tbody").append(donutInfo);
     }
+
+    // Fill with user's previous prices for subsequent days
+    if (player.day > 1) {
+        for (var i = 0; i < player.donuts.length; i++) {
+            $(`#sellFor${player.donuts[i]}`).val(player.sellPrices[i]);
+        }
+    }
+}
+
+/** Switch to donut sell view. */
+function fillDonutSell() {
+    var donutSellTemplate = _.template($("#donutSellTemplate").html());
+
+    // Get user's prices
+    player.sellPrices = [];
+    for (var i = 0; i < player.donuts.length; i++) {
+        player.sellPrices.push(parseInt($(`#sellFor${player.donuts[i]}`).val()));
+    }
+
+    $("#donutSelection > tbody").empty();  // Clear old entries
+    for (var i = 0; i < player.donuts.length; i++) {
+        var donut = constants.donuts[player.donuts[i]];
+        
+        var donutInfo = donutSellTemplate({
+            img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+            name: donut.name,
+            cost: player.sellPrices[i],
+            quantity: i
+        });
+
+        $("#donutSelection > tbody").append(donutInfo);
+    }
+}
+
+/** Simulate one day of customers. */
+function simulateDay() {
+
 }
 
 /** Switch to day view. */
 function startDay() {
+    // Make sure we can start the day
     var moneyRemaining = parseInt($("#moneyRemaining").text().split("$")[1]);
-    alert(`Starting day with $${moneyRemaining} remaining.`)
+    if (moneyRemaining < 0) {
+        console.log("Not enough money.")
+        return;
+    }
+
+    flipPlayerInfo();
+    fillDonutSell();
+
+    // Update button
+    $("#startButton").attr("onclick", "startNight()");
+    $("#startButton").text("End Day");
+
+    // Turn on the stream
+    $("#infoStream").css({"display": "inline-block"});
+    simulateDay();
 }
 
 /** Switch to night view. */
 function startNight() {
-    var nightInfoTemplate = _.template($("#nightInfoTemplate").html());
-    var donutInfoTemplate = _.template($("#donutInfoTemplate").html());
+    player.day += 1;
 
-    var nightInfo = nightInfoTemplate({
-        day: player.day,
-        money: player.money
-    });
-
+    flipPlayerInfo();
     fillDonutSelection();
+    refreshTotalCost();
 
-    $("#night").html(nightInfo);
-    refreshTotalCost()
+    // Turn off the stream
+    $("#infoStream").css({"display": "none"});
+
+    // Update button
+    $("#startButton").attr("onclick", "startDay()");
+    $("#startButton").text("Start Day");
 }
 
 function refreshTotalCost() {
@@ -77,16 +142,16 @@ function refreshTotalCost() {
 
     $("#totalCost").html(`Total cost: $${totalCost}`);
     $("#moneyRemaining").html(`Money remaining: $${player.money - totalCost}`);
-    var fontColor = 'green';
-    var buttonClass = 'buttonLit';
+    var fontColor = "green";
+    var buttonClass = "buttonLit";
     if (totalCost > player.money) {
-        fontColor = 'red';
-        buttonClass = 'button';
+        fontColor = "red";
+        buttonClass = "button";
     }
 
-    $("#totalCost").css({'color': fontColor});
-    var button = $("#startDayButton");
-    $("#startDayButton")[0].className = buttonClass;
+    $("#totalCost").css({"color": fontColor});
+    var button = $("#startButton");
+    $("#startButton")[0].className = buttonClass;
 }
 
 /** Runs on startup. */

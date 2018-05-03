@@ -14,26 +14,30 @@
 		<div><a href="https://github.com/azhu7/DonutTycoon"></a></div>
 		<h1 id="header">Donut Tycoon</h1>
 
-		<div id="mainContainer">
+		<div id="mainContainer" class="row">
 			<div id="infoContainer">
-				<div id="night">
-					<!-- Will fill this with a nightInfoTemplate -->
+				<div id="playerInfo">
+					<!-- Will fill this with a playerInfoTemplate -->
 				</div>
 				<p>Select donuts to make for tomorrow!</p>
 				<table id="donutSelection">
 					<tbody>
-						<!-- Will fill this dynamically -->
+						<!-- Will fill this with rows of donutInfoTemplate/donutSellTemplate -->
 					</tbody>
 				</table>
 				<p id="totalCost">Total cost: $0</p>
 				<p id="moneyRemaining">Money remaining: $0</p>
-				<div class="buttonLit" id="startDayButton"><h3 id="startDayButtonText" onclick="startDay()">Start Day</h3></div>
+				<div class="buttonLit" id="startButton"><h3 id="startButtonText" onclick="startDay()">Start Day</h3></div>
+			</div>
+			<div id="infoStream">
+				Hello
+				There
 			</div>
 		</div>
 
-		<script type="text/template" id="nightInfoTemplate">
-			<div id="nightInfo">
-				<p>Day <%= day %></p>
+		<script type="text/template" id="playerInfoTemplate">
+			<div id="playerInfo">
+				<p><%= day %></p>
 				<p>You have $<%= money %></p>
 			</div>
 		</script>
@@ -49,6 +53,18 @@
 				<td>Quantity: <input class="numInput" onchange="refreshTotalCost()" type="number" min="0" max="9999" value="0" id=<%= quantityId %>></td>
 				<td class="spacer"></td>
 				<td>Sell for: $<input class="numInput" type="number" min="1" max="999999" value=<%= cost %> id=<%= sellForId %>></td>
+			</tr>
+		</script>
+
+		<script type="text/template" id="donutSellTemplate">
+			<tr>
+				<td><%= img %></td>
+				<td class="spacer"></td>
+				<td><%= name %></td>
+				<td class="spacer"></td>
+				<td>Price: $<%= cost %></td>
+				<td class="spacer"></td>
+				<td>Quantity: <%= quantity %></td>
 			</tr>
 		</script>
 

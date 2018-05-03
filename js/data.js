@@ -13,11 +13,12 @@ var GameState = Object.freeze({
 /** Game values for a default Player. */
 function Player() {
 	this.money = 10;
-	this.day = 1;
-	this.gameState = GameState.Night;
+	this.day = 0;
+	this.gameState = GameState.Day;
 
 	this.ingredients = [0, 2, 3];
 	this.donuts = [0, 1, 2, 3];
+	this.sellPrices = [];
 }
 
 function Debug() {

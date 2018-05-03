@@ -25,6 +25,7 @@ body {
 
 #mainContainer {
 	text-align: center;
+	max-height: 700px;
 }
 
 #infoContainer {
@@ -44,8 +45,7 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
-	font-size: 20px;
-	font-weight: bold;
+	font-size: 16px;
 	background-color: lightgrey;
 	display: none;
 	overflow: auto;

@@ -89,9 +89,19 @@ function fillDonutSell() {
     }
 }
 
-/** Simulate one day of customers. */
-function simulateDay() {
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
+/** Simulate one day of customers. */
+async function simulateDay() {
+    for (var i = 0; i < player.shopLocation; ++i) {
+        var name = constants.names[Math.floor(Math.random() * constants.names.length)];
+        $("#infoFeed").append(`${name} wants to buy 2 Chocolate Donut(s) for $3 each.<br/>`);
+        $("#infoFeed").append(`${name} bought 1 Chocolate Donut for $3.<br/>`);
+        $("#infoFeed").scrollTop($("#infoFeed")[0].scrollHeight);
+        await sleep(1000);
+    }
 }
 
 /** Switch to day view. */

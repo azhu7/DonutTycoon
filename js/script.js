@@ -66,10 +66,12 @@ function fillDonutSelection() {
 function fillDonutSell() {
     var donutSellTemplate = _.template($("#donutSellTemplate").html());
 
-    // Get user's prices
+    // Get user's inputs
     player.sellPrices = [];
+    player.quantities = [];
     for (var i = 0; i < player.donuts.length; i++) {
         player.sellPrices.push(parseInt($(`#sellFor${player.donuts[i]}`).val()));
+        player.quantities.push(parseInt($(`#quantity${player.donuts[i]}`).val()));
     }
 
     $("#donutSelection > tbody").empty();  // Clear old entries
@@ -80,7 +82,7 @@ function fillDonutSell() {
             img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
             name: donut.name,
             cost: player.sellPrices[i],
-            quantity: i
+            quantity: player.quantities[i]
         });
 
         $("#donutSelection > tbody").append(donutInfo);
@@ -109,7 +111,7 @@ function startDay() {
     $("#startButton").text("End Day");
 
     // Turn on the stream
-    $("#infoStream").css({"display": "inline-block"});
+    $("#infoFeed").css({"display": "inline-block"});
     simulateDay();
 }
 
@@ -122,7 +124,7 @@ function startNight() {
     refreshTotalCost();
 
     // Turn off the stream
-    $("#infoStream").css({"display": "none"});
+    $("#infoFeed").css({"display": "none"});
 
     // Update button
     $("#startButton").attr("onclick", "startDay()");

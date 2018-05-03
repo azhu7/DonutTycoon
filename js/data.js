@@ -19,6 +19,7 @@ function Player() {
 	this.ingredients = [0, 2, 3];
 	this.donuts = [0, 1, 2, 3];
 	this.sellPrices = [];
+	this.quantities = [];
 }
 
 function Debug() {

@@ -31,11 +31,11 @@ function fillDonutSelection() {
     for (var i = 0; i < player.donuts.length; i++) {
         var donut = constants.donuts[player.donuts[i]];
         var donutInfo = donutInfoTemplate({
-            img: `<img src="img/` + donut.imagePath + `" style="max-height: 100px; max-width: 100px;" />`,
+            img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
             name: donut.name,
             cost: donut.cost,
-            quantityId: "quantity"+player.donuts[i],
-            sellForId: "sellFor"+player.donuts[i]
+            quantityId: `quantity${player.donuts[i]}`,
+            sellForId: `sellFor${player.donuts[i]}`
         });
 
         $("#donutSelection > tbody").append(donutInfo);
@@ -44,7 +44,8 @@ function fillDonutSelection() {
 
 /** Switch to day view. */
 function startDay() {
-
+    var moneyRemaining = parseInt($("#moneyRemaining").text().split("$")[1]);
+    alert(`Starting day with $${moneyRemaining} remaining.`)
 }
 
 /** Switch to night view. */
@@ -63,30 +64,19 @@ function startNight() {
     refreshTotalCost()
 }
 
-/** Refresh values in day view. */
-function refreshDay() {
-
-}
-
-/** Refresh values in night view. */
-function refreshNight() {
-    
-}
-
 function refreshTotalCost() {
-    console.log("refreshed!");
     var totalCost = 0;
     for (var i = 0; i < player.donuts.length; ++i) {
-        var num = $("#quantity" + player.donuts[i]).val();
-        if (num === "") {
+        var quantity = parseInt($(`#quantity${player.donuts[i]}`).val());
+        if (isNaN(quantity)) {
             continue;
         }
         
-        quantity = parseInt(num);
         totalCost += constants.donuts[player.donuts[i]].cost * quantity;
     }
 
-    $("#totalCost").html("Total cost: $" + totalCost);
+    $("#totalCost").html(`Total cost: $${totalCost}`);
+    $("#moneyRemaining").html(`Money remaining: $${player.money - totalCost}`);
     var fontColor = 'green';
     var buttonClass = 'buttonLit';
     if (totalCost > player.money) {
@@ -99,28 +89,6 @@ function refreshTotalCost() {
     $("#startDayButton")[0].className = buttonClass;
 }
 
-function refreshAll() {
-    if (player.gameState == GameState.Day) {
-        refreshDay();
-    }
-    else if (player.gameState == GameState.Night) {
-        refreshNight();
-    }
-}
-
-/** Game update function. */
-var refresh = function() {
-    if (typeof refresh.before == 'undefined') {
-        refresh.before = new Date();
-    }
-
-    var now = new Date();
-    var elapsedTime = now.getTime() - refresh.before.getTime();
-    refreshAll();
-    refresh.before = new Date();
-    setTimeout(refresh, 1000);
-};
-
 /** Runs on startup. */
 $(function() {
     console.log("Running start up code.");
@@ -131,7 +99,6 @@ $(function() {
     $("#versionNum").html(constants.version);
 
     startNight();
-    //refresh();
 
     if (debug.autosave) {
         setInterval(save, constants.saveIntervalInMilliseconds);

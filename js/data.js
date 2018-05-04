@@ -24,7 +24,7 @@ function Player() {
 	this.gameState = GameState.Day;
 
 	this.ingredients = [0, 2, 3];
-	this.donuts = [0, 1, 2, 3];
+	this.donuts = [0, 1, 2, 3, 4, 0, 0, 0, 0, 0];
 	this.sellPrices = [];
 	this.quantities = [];
 	this.shopLocation = ShopLocation.Home;

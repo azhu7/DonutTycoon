@@ -26,12 +26,23 @@ function init() {
 
 function flipPlayerInfo() {
     var playerInfoTemplate = _.template($("#playerInfoTemplate").html());
-    player.gameState = player.gameState === GameState.Day ? GameState.Night : GameState.Day;
-    var prefix = player.gameState === GameState.Day ? "Day" : "Night";
+    if (player.gameState === GameState.Day) {
+        // Switching to night
+        player.gameState = GameState.Night;
+        var prefix = "Night";
+        var message = "Select donuts to make for tomorrow!";
+    }
+    else {
+        // Switching to day
+        player.gameState = GameState.Day;
+        var prefix = "Day";
+        var message = "Serve the customers!";
+    }
 
     var playerInfo = playerInfoTemplate({
         day: `${prefix} ${player.day}`,
-        money: player.money
+        money: player.money,
+        message: message
     });
     $("#playerInfo").html(playerInfo);
 }
@@ -95,32 +106,43 @@ function sleep(ms) {
 
 /** Simulate one day of customers. */
 async function simulateDay() {
+    // Hide button until day is over
+    $("#startButton").attr("hidden", true);
+
     for (var i = 0; i < player.shopLocation; ++i) {
         var name = constants.names[Math.floor(Math.random() * constants.names.length)];
-        $("#infoFeed").append(`${name} wants to buy 2 Chocolate Donut(s) for $3 each.<br/>`);
-        $("#infoFeed").append(`${name} bought 1 Chocolate Donut for $3.<br/>`);
-        $("#infoFeed").scrollTop($("#infoFeed")[0].scrollHeight);
+        $("#feedContent").append(`${i}${name} wants to buy 2 Chocolate Donut(s) for $3 each.<br/>`);
+        $("#feedContent").append(`${name} bought 1 Chocolate Donut for $3.<br/>`);
+        $("#feedContent").scrollTop($("#feedContent")[0].scrollHeight);
         await sleep(1000);
     }
+
+    $("#startButton").attr("hidden", false);
 }
 
 /** Switch to day view. */
 function startDay() {
     // Make sure we can start the day
-    var moneyRemaining = parseInt($("#moneyRemaining").text().split("$")[1]);
-    if (moneyRemaining < 0) {
+    var moneyRemaining = parseInt($("#lowerInfo").find("tr").eq(1).find("td").eq(0).text().split("$")[1]);
+    if (isNaN(moneyRemaining)) {
+        console.error("Money remaining is NaN.");
+        return;
+    }
+    else if (moneyRemaining < 0) {
         console.log("Not enough money.")
         return;
     }
 
+    player.money = moneyRemaining;
     flipPlayerInfo();
     fillDonutSell();
 
-    // Update button
+    // Update button. Hide until day is over.
     $("#startButton").attr("onclick", "startNight()");
     $("#startButton").text("End Day");
 
     // Turn on the stream
+    $("#feedContent").empty();
     $("#infoFeed").css({"display": "inline-block"});
     simulateDay();
 }
@@ -152,8 +174,10 @@ function refreshTotalCost() {
         totalCost += constants.donuts[player.donuts[i]].cost * quantity;
     }
 
-    $("#totalCost").html(`Total cost: $${totalCost}`);
-    $("#moneyRemaining").html(`Money remaining: $${player.money - totalCost}`);
+    var costText = `Total cost: $${totalCost}`;
+    var moneyRemainingText = `Money remaining: $${player.money - totalCost}`;
+    $("#lowerInfo > tbody").empty();
+    $("#lowerInfo > tbody").append(`<tr><td>${costText}</td></tr><tr><td>${moneyRemainingText}</td></tr>`);
     var fontColor = "green";
     var buttonClass = "buttonLit";
     if (totalCost > player.money) {
@@ -161,7 +185,8 @@ function refreshTotalCost() {
         buttonClass = "button";
     }
 
-    $("#totalCost").css({"color": fontColor});
+    // Update lower info color and button type
+    $("#lowerInfo").find("tr").eq(0).find("td").eq(0).css({"color": fontColor})
     var button = $("#startButton");
     $("#startButton")[0].className = buttonClass;
 }

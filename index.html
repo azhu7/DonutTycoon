@@ -19,18 +19,23 @@
 				<div id="playerInfo">
 					<!-- Will fill this with a playerInfoTemplate -->
 				</div>
-				<p>Select donuts to make for tomorrow!</p>
-				<table id="donutSelection">
+				<div id="tablePane">
+					<table id="donutSelection">
+						<tbody>
+							<!-- Will fill this with rows of donutInfoTemplate/donutSellTemplate -->
+						</tbody>
+					</table>
+				</div>
+				<table id="lowerInfo">
 					<tbody>
-						<!-- Will fill this with rows of donutInfoTemplate/donutSellTemplate -->
+						<!-- Will fill this with text -->
 					</tbody>
 				</table>
-				<p id="totalCost">Total cost: $0</p>
-				<p id="moneyRemaining">Money remaining: $0</p>
 				<div class="buttonLit" id="startButton"><h3 id="startButtonText" onclick="startDay()">Start Day</h3></div>
 			</div>
 			<div id="infoFeed">
-				Customer Feed<br/><br/>
+				<p id="feedHeader">Customer Feed</p>
+				<p id="feedContent"></p>
 			</div>
 		</div>
 
@@ -38,6 +43,7 @@
 			<div id="playerInfo">
 				<p><%= day %></p>
 				<p>You have $<%= money %></p>
+				<p><%= message %></p>
 			</div>
 		</script>
 

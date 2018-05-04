@@ -15,14 +15,21 @@ var ShopLocation = Object.freeze({
 	Stand:25,
 	SmallShop:40,
 	Factory:60
-})
+});
 
 var Support = Object.freeze({
 	Grandma:1,
 	Friends:5,
 	Sponsor:25,
 	VentureCapital:100
-})
+});
+
+var Ads = Object.freeze({
+	Posters:2,
+	OnlineAds:4,
+	TVAds:8,
+	CelebrityEndorsement:16
+});
 
 /** Game values for a default Player. */
 function Player() {

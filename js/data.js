@@ -10,25 +10,28 @@ var GameState = Object.freeze({
 	Night:2
 });
 
+/** Increase # of customers. */
 var ShopLocation = Object.freeze({
-	Home:15,
-	Stand:25,
-	SmallShop:40,
-	Factory:60
+	Home:20,
+	Stand:30,
+	SmallShop:45,
+	Factory:75
 });
 
-var Support = Object.freeze({
-	Grandma:1,
-	Friends:5,
-	Sponsor:25,
-	VentureCapital:100
-});
-
+/** Increase # customers. */
 var Ads = Object.freeze({
 	Posters:2,
 	OnlineAds:4,
 	TVAds:8,
 	CelebrityEndorsement:16
+});
+
+/** Passive income. */
+var Support = Object.freeze({
+	Grandma:1,
+	Friends:5,
+	Sponsor:25,
+	VentureCapital:100
 });
 
 /** Game values for a default Player. */

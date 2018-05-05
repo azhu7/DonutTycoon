@@ -29,13 +29,7 @@ body {
 	margin-right: 0%;
 }
 
-#donutShopTab {
-	margin-left: 10%;
-	margin-right: 10%;
-	max-height: 850px;
-}
-
-#upgradesTab {
+#donutShopTab, #upgradesTab {
 	margin-left: 10%;
 	margin-right: 10%;
 	max-height: 850px;
@@ -58,9 +52,9 @@ body {
 }
 
 #unownedIngredients {
-	margin-left: 10%;
-	margin-right: 10%;
-	min-width: 80%;
+	margin-left: 5%;
+	margin-right: 5%;
+	min-width: 90%;
 	text-align: left;
 }
 
@@ -77,9 +71,9 @@ body {
 }
 
 #inProgressRecipes {
-	margin-left: 10%;
-	margin-right: 10%;
-	min-width: 80%;
+	margin-left: 5%;
+	margin-right: 5%;
+	min-width: 90%;
 	text-align: left;
 }
 
@@ -105,27 +99,25 @@ body {
 	flex: 60%;
 }
 
-#infoFeed {
+#infoFeed, #advisorColumn {
 	margin-left: auto;
 	margin-right: auto;
 	padding: 0px 10px 0px 10px;
+	text-align: center;
 	height: 800px;
 	background-color: #d3d3d3;
-	display: none;
 	overflow: auto;
 	flex: 20%;
 }
 
-#feedHeader {
-	text-align: center;
-	font-size: 18px;
-	font-weight: bold;
-}
-
-#feedContent {
+#feedContent, #advisorContent {
 	text-align: left;
 	font-size: 16px;
 	overflow: auto;
+}
+
+#advisorTableRow {
+	height: 25px;
 }
 
 .row {
@@ -143,15 +135,7 @@ body {
 	padding-right: 10px;
 }
 
-#donutSelection {
-	text-align: left;
-	white-space: nowrap;
-	margin: 0 auto;
-	min-width: 90%;
-	padding: 10px;
-}
-
-#donutSelling {
+#donutSelection, #donutSelling {
 	text-align: left;
 	white-space: nowrap;
 	margin: 0 auto;

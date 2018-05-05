@@ -228,6 +228,21 @@ function saveDonutSelection() {
     $.extend(true, player.selectedQuantities, player.quantities);
 }
 
+/** Populate advisor information. */
+function fillAdvisor() {
+    var advisorTemplate = _.template($("#advisorTemplate").html());
+
+    $("#advisorContent > tbody").empty();
+    $.each(constants.advisor, function(k, v) {
+        var advisorInfo = advisorTemplate({
+            "description": k,
+            "amount": v(player)
+        });
+
+        $("#advisorContent > tbody").append(advisorInfo);
+    });
+}
+
 /**
  * Sleep for the specified time.
  * @param  {number} ms Time to sleep in milliseconds.
@@ -323,8 +338,9 @@ function startDay() {
     $("#startButton").attr("onclick", "startNight()");
     $("#startButton").text("End Day");
 
-    // Hide lower info
+    // Hide night components
     $("#lowerInfo").hide();
+    $("#advisorColumn").hide();
 
     // Show stream
     $("#feedContent").empty();
@@ -339,13 +355,12 @@ function startNight() {
 
     flipPlayerInfo();
     fillDonutSelection();
+    fillAdvisor();
     refreshTotalCost();
 
-    // Turn off the stream
-    $("#infoFeed").css({"display": "none"});
-
-    // Show lower info
     $("#lowerInfo").show();
+    $("#infoFeed").hide();
+    $("#advisorColumn").show();
 
     // Update button
     $("#startButton").attr("onclick", "startDay()");
@@ -542,6 +557,7 @@ function buyIngredient(ingredientId) {
 function refreshDonutShop() {
     refreshPlayerInfo();
     refreshDonutList();
+    fillAdvisor();
     refreshTotalCost();
 }
 

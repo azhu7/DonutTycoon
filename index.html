@@ -48,8 +48,16 @@
 					<div class="buttonLit" id="startButton"><h3 id="startButtonText" onclick="startDay();">Start Day</h3></div>
 				</div>
 				<div id="infoFeed" class="boxed">
-					<p id="feedHeader">Customer Feed</p>
+					<h2 id="feedHeader">Customer Feed</h2>
 					<p id="feedContent"></p>
+				</div>
+				<div id="advisorColumn" class="boxed">
+					<h2 id="advisorHeader">Donut Advisor</h2>
+					<table id="advisorContent">
+						<tbody>
+							<!-- Will fill this with advisorTemplate -->
+						</tbody>
+					</table>
 				</div>
 			</div>
 
@@ -76,6 +84,14 @@
 					<td>Price: $<%= cost %></td>
 					<td class="spacer"></td>
 					<td id=<%= quantityId %>>Quantity: <%= quantity %></td>
+				</tr>
+			</script>
+
+			<script type="text/template" id="advisorTemplate">
+				<tr id="advisorTableRow">
+					<td><%= description %></td>
+					<td class="spacer"></td>
+					<td><%= amount %></td>
 				</tr>
 			</script>
 			<!-- End Donut Shop -->

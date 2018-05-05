@@ -40,6 +40,26 @@ function egg() {
     }
 }
 
+function openTab(evt, tabName) {
+    var tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = $(".tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = $(".tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    $(`#${tabName}`)[0].style.display = "flex";
+    evt.target.className += " active";
+}
+
 /**
  * Round amount to the hundredth place.
  * @param  {number} amount Amount to round.
@@ -222,8 +242,8 @@ async function simulateDay() {
             $("#feedContent").append(`${name} did not buy any donuts.<br/>`);
         }
 
-        $("#feedContent").scrollTop($("#feedContent")[0].scrollHeight);
-        await sleep(1000);
+        $("#infoFeed").scrollTop($("#infoFeed")[0].scrollHeight);
+        await sleep(player.customerDelayTime);
     }
 
     $("#startButton").attr("hidden", false);
@@ -358,5 +378,6 @@ $(function() {
         console.warn("Autosave is turned off for development purposes.");
     }
 
+    $("#defaultOpen").click();
     console.log("Finished start up code.");
 });

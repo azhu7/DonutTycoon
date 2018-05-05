@@ -12,10 +12,10 @@ var GameState = Object.freeze({
 
 /** Increase # of customers. */
 var ShopLocation = Object.freeze({
-	Home:20,
-	Stand:30,
-	SmallShop:45,
-	Factory:75
+	Home:25,
+	Stand:50,
+	SmallShop:100,
+	Factory:200
 });
 
 /** Increase # customers. */
@@ -36,6 +36,7 @@ var Support = Object.freeze({
 
 /** Game values for a default Player. */
 function Player() {
+	// Game info
 	this.money = 9;
 	this.dayProfit = 0;
 	this.day = 0;
@@ -62,6 +63,9 @@ function Player() {
 	this.customerGenerosity = 1;  // Influences how much extra customer $
 	this.customerHunger = 1;	  // Influences # donuts customer buys
 	this.customerReconsider = 1;  // # times customer "rerolls" on unavailable donuts
+
+	// Other
+	this.customerDelayTime = 500;  // Time between customers in milliseconds
 }
 
 function Debug() {

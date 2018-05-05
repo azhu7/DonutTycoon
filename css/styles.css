@@ -25,20 +25,51 @@ body {
 }
 
 #mainContainer {
+	max-width: 1500px;
 	text-align: center;
+	display: inline;
+}
+
+#donutShopTab {
 	max-height: 800px;
 }
 
-#infoContainer {
+#upgradesTab {
+	max-height: 800px;
+}
+
+.upgradeColumn {
+	margin-left: 0px;
+	margin-right: 0px;
+	font-size: 18px;
+	font-weight: bold;
+	overflow: auto;
+	flex: 25%;
+	max-width: 500px;
+	min-height: 800px;
+}
+
+#ingredientsColumn {
+	background-color: lightpink;
+}
+
+#recipesColumn {
+	background-color: lightgreen;
+}
+
+#upgradesColumn {
+	background-color: lightyellow;
+}
+
+#infoColumn {
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
-	font-size: 20px;
+	font-size: 18px;
 	font-weight: bold;
 	background-color: lightblue;
 	overflow: auto;
-	flex: 65%;
-	max-width: 900px;
+	flex: 60%;
 	min-height: 800px;
 }
 
@@ -48,13 +79,13 @@ body {
 	background-color: lightgrey;
 	display: none;
 	overflow: auto;
-	flex: 35%;
+	flex: 20%;
 	min-height: 800px;
 }
 
 #feedHeader {
 	text-align: center;
-	font-size: 20px;
+	font-size: 18px;
 	font-weight: bold;
 }
 
@@ -143,4 +174,40 @@ body {
 
 .totalCost {
 	color: 'green';
+}
+
+.boxed {
+	border: 1px solid #ccc;
+}
+
+/** Tabs */
+.tab {
+	overflow: hidden;
+	background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
 }

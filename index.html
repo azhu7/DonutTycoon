@@ -12,7 +12,7 @@
 	<body>
 		<div>Instructions</div>
 		<div><a href="https://github.com/azhu7/DonutTycoon"></a></div>
-		<h1 id="header" onclick="egg();">Donut Tycoon</h1>
+		<h1 id="header" onclick="egg();"></h1>
 
 		<div id="mainContainer">
 			<!-- Begin Tabs -->
@@ -89,9 +89,9 @@
 
 			<script type="text/template" id="advisorTemplate">
 				<tr id="advisorTableRow">
-					<td><%= description %></td>
+					<td class="leftAligned"><%= description %></td>
 					<td class="spacer"></td>
-					<td><%= amount %></td>
+					<td class="rightAligned"><%= amount %></td>
 				</tr>
 			</script>
 			<!-- End Donut Shop -->

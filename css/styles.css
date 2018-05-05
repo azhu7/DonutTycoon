@@ -116,6 +116,10 @@ body {
 	overflow: auto;
 }
 
+#advisorContent {
+	width: 100%;
+}
+
 #advisorTableRow {
 	height: 25px;
 }
@@ -210,6 +214,14 @@ body {
 
 .underlined {
 	text-decoration: underline;
+}
+
+.leftAligned {
+	text-align: left;
+}
+
+.rightAligned {
+	text-align: right;
 }
 
 .ownedIngredient {

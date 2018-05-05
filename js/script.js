@@ -16,11 +16,13 @@ function init() {
         }
         else {
             player = new Player();
+            player.name = prompt("Hello! What is your name?", "");
         }
     }
     else {
         console.warn("Loading is turned off for development purposes.");
         player = new Player();
+        player.name = prompt("Hello! What is your name?", "");
     }
 }
 
@@ -35,7 +37,7 @@ function egg() {
         $("#header").text("Alex and Benicia's Donut Shop");
     }
     else if (egg.clicks == 6) {
-        $("#header").text("Donut Tycoon");
+        $("#header").text(`${player.name}'s Donut Shop`);
         egg.clicks = 0;
     }
 }
@@ -574,6 +576,7 @@ $(function() {
     // Initialize player
     init();
 
+    $("#header").html(`${player.name}'s Donut Shop`);
     $("#versionNum").html(constants.version);
 
     // Start at night
@@ -582,15 +585,15 @@ $(function() {
     // Open default tab
     $("#defaultOpen").click();
 
+    if (!checkInvariants()) {
+        console.error("Invariant check failed!");
+    }
+
     if (debug.autosave) {
         setInterval(save, constants.saveIntervalInMilliseconds);
     }
     else {
         console.warn("Autosave is turned off for development purposes.");
-    }
-
-    if (!checkInvariants()) {
-        console.error("Invariant check failed!");
     }
 
     console.log("Finished start up code.");

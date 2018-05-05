@@ -45,7 +45,6 @@ body {
 	font-weight: bold;
 	overflow: auto;
 	flex: 25%;
-	max-width: 500px;
 	min-height: 800px;
 }
 

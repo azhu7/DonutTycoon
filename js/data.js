@@ -47,8 +47,8 @@ function Player() {
 	this.donuts = [1, 0, 0, 0, 0];
 	this.numUnlocked = 1;		   // Number of unlocked donuts
 	this.sellPrices = [];		   // Remember selected
-	this.selectedQuantities = [];  // Remember selected
 	this.quantities = [];		   // Track current quantities
+	this.selectedQuantities = [];  // Remember selected
 
 	// Number of Customers
 	this.shopLocation = ShopLocation.Home;

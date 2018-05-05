@@ -25,15 +25,19 @@ body {
 }
 
 #mainContainer {
-	max-width: 80%;
-	display: inline;
+	margin-left: 0%;
+	margin-right: 0%;
 }
 
 #donutShopTab {
+	margin-left: 10%;
+	margin-right: 10%;
 	max-height: 850px;
 }
 
 #upgradesTab {
+	margin-left: 10%;
+	margin-right: 10%;
 	max-height: 850px;
 }
 
@@ -147,6 +151,14 @@ body {
 	padding: 10px;
 }
 
+#donutSelling {
+	text-align: left;
+	white-space: nowrap;
+	margin: 0 auto;
+	min-width: 90%;
+	padding: 10px;
+}
+
 #lowerInfo {
 	text-align: center;
 	white-space: nowrap;
@@ -226,6 +238,8 @@ body {
 
 /** Tabs */
 .tab {
+	margin-left: 10%;
+	margin-right: 10%;
 	overflow: hidden;
 	background-color: #f1f1f1;
 }

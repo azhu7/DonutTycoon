@@ -78,7 +78,7 @@ function checkInvariants() {
 /**
  * Round amount to the hundredth place.
  * @param  {number} amount Amount to round.
- * @return {number}        Rounded amount
+ * @return {number}        Rounded amount.
  */
 function roundMoney(amount) {
     return Math.round(100 * amount) / 100;
@@ -177,30 +177,17 @@ function fillDonutSelection() {
             $(`#sellFor${i}`).val(player.sellPrices[i]);
         }
     }
+
+    $("#donutSelling").hide();
+    $("#donutSelection").show();
 }
 
 /** Populate list of donuts sold. */
 function fillDonutSell() {
     var donutSellTemplate = _.template($("#donutSellTemplate").html());
 
-    // Get user's inputs
-    player.sellPrices = [];
-    player.quantities = [];
-    for (var i = 0; i < constants.donuts.length; i++) {
-        if (!player.donuts[i]) {
-            player.sellPrices.push(constants.donuts[i].cost);
-            player.quantities.push(0);
-        }
-        else {
-            player.sellPrices.push(parseFloat($(`#sellFor${i}`).val()));
-            player.quantities.push(parseInt($(`#quantity${i}`).val()));
-        }
-    }
-
-    $.extend(true, player.selectedQuantities, player.quantities);
-
     // Populate donut menu
-    $("#donutSelection > tbody").empty();  // Clear old entries
+    $("#donutSelling > tbody").empty();  // Clear old entries
     for (var i = 0; i < constants.donuts.length; i++) {
         if (!player.donuts[i]) {
             continue;
@@ -215,8 +202,30 @@ function fillDonutSell() {
             quantity: player.quantities[i]
         });
 
-        $("#donutSelection > tbody").append(donutInfo);
+        $("#donutSelling > tbody").append(donutInfo);
     }
+
+    $("#donutSelection").hide();
+    $("#donutSelling").show();
+}
+
+/** Save player's selected donut quantities/prices. */
+function saveDonutSelection() {
+    // Get user's inputs from #donutSelection
+    player.sellPrices = [];
+    player.quantities = [];
+    for (var i = 0; i < constants.donuts.length; i++) {
+        if (!player.donuts[i]) {
+            player.sellPrices.push(constants.donuts[i].cost);
+            player.quantities.push(0);
+        }
+        else {
+            player.sellPrices.push(parseFloat($(`#sellFor${i}`).val()));
+            player.quantities.push(parseInt($(`#quantity${i}`).val()));
+        }
+    }
+
+    $.extend(true, player.selectedQuantities, player.quantities);
 }
 
 /**
@@ -230,7 +239,7 @@ function sleep(ms) {
 
 /**
  * Select donut for customer, biased towards those in stock.
- * @return {number} Donut ID
+ * @return {number} Donut ID.
  */
 function selectDonut() {
     function roll() {
@@ -307,6 +316,7 @@ function startDay() {
     player.dayProfit = moneyRemaining - player.money;  // Negative profits
     player.money = moneyRemaining;
     flipPlayerInfo();
+    saveDonutSelection();
     fillDonutSell();
 
     // Update button. Hide until day is over.
@@ -441,11 +451,11 @@ function fillIngredients() {
 }
 
 /**
- * Convert an array of items to html list syntax.
- * "<li>array[0]</li>...<li>array[n-1]</li>"
- * @param  {array} array        Items to convert to html list syntax
+ * Convert an array of ingredients to html list syntax.
+ * Assigns classes per list item depending on if player owns ingredient or not.
+ * @param  {array} array        Items to convert to html list syntax.
  * @param  {function} transform Function to map items. Default map to self.
- * @return {string}             Html list syntax
+ * @return {string}             Html list syntax.
  */
 function formatIngredientArrayAsHtml(array) {
     var html = ""
@@ -476,8 +486,6 @@ function fillRecipes() {
             });
 
             $("#inProgressRecipes > tbody").append(inProgressRecipeInfo);
-            //var canAfford = player.money >= ingredient.cost;
-            //$(`#ingredient${i}`)[0].className = canAfford ? "buttonLit" : "button";
         }
         else {
             var completedRecipeInfo = completedRecipeTemplate({
@@ -490,6 +498,10 @@ function fillRecipes() {
     }
 }
 
+/**
+ * Handle purchasing an ingredient. Assume can afford ingredient.
+ * @param  {number} ingredientId Index of ingredient player is buying.
+ */
 function buyIngredient(ingredientId) {
     if (player.ingredients[ingredientId]) {
         console.error(`Ingredient ${ingredientId} already owned.`);
@@ -511,6 +523,7 @@ function buyIngredient(ingredientId) {
             continue;  // Skip donuts we already own
         }
 
+        // Unlock donut if player now owns every ingredient
         if (constants.donuts[i].ingredients.every(ingredient => {
             return player.ingredients[ingredient];
         })) {
@@ -525,12 +538,14 @@ function buyIngredient(ingredientId) {
     fillRecipes();
 }
 
+/** Refresh donut shop tab components. */
 function refreshDonutShop() {
     refreshPlayerInfo();
     refreshDonutList();
     refreshTotalCost();
 }
 
+/** Refresh upgrade tab components. */
 function refreshUpgrades() {
     fillIngredients();
     fillRecipes();

@@ -17,14 +17,14 @@
 		<div id="mainContainer">
 			<!-- Begin Tabs -->
 			<div class="tab boxed">
-				<button class="tablinks active" onclick="openTab(event, 'donutShopTab');" id="defaultOpen">Donut Shop</button>
-				<button class="tablinks" onclick="openTab(event, 'upgradesTab');">Upgrades</button>
+				<button class="tablinks active" onclick="refreshDonutShop(); openTab(event, 'donutShopTab');" id="defaultOpen">Donut Shop</button>
+				<button class="tablinks" onclick="refreshUpgrades(); openTab(event, 'upgradesTab');">Upgrades</button>
 			</div>
 			<!-- End Tabs -->
 			<!-- Begin Donut Shop -->
 			<div id="donutShopTab" class="tabcontent row">
 				<div id="infoColumn" class="boxed">
-					<p id="dayInfo"></p>
+					<h2 id="dayInfo"></h2>
 					<p>You have $<span id="playerMoney"></span></p>
 					<p id="message"></p>
 					<div id="tablePane">
@@ -39,6 +39,7 @@
 							<!-- Will fill this with text -->
 						</tbody>
 					</table>
+					<span><br/></span>
 					<div class="buttonLit" id="startButton"><h3 id="startButtonText" onclick="startDay();">Start Day</h3></div>
 				</div>
 				<div id="infoFeed" class="boxed">
@@ -76,31 +77,79 @@
 			<!-- Begin Upgrades -->
 			<div id="upgradesTab" class="tabcontent row">
 				<div id="ingredientsColumn" class="upgradeColumn boxed">
-					<p id="ingredientsHeader">Ingredients</p>
+					<h2 id="ingredientsHeader">Ingredients</h2>
 					<div id="ingredientsContent">
-						Ingredients Stuff
+						<h3 class="underlined">Unowned</h3>
+						<table id="unownedIngredients">
+							<tbody>
+								<!-- Will fill this with rows of unownedIngredientTemplate -->
+							</tbody>
+						</table>
+						<h3 class="underlined">Owned</h3>
+						<table id="ownedIngredients">
+							<tbody>
+								<!-- Will fill this with rows of ownedIngredientTemplate -->
+							</tbody>
+						</table>
 					</div>
 				</div>
 				<div id="recipesColumn" class="upgradeColumn boxed">
-					<p id="recipesHeader">Recipes</p>
+					<h2 id="recipesHeader">Recipes</h2>
 					<div id="recipesContent">
-						Recipes Stuff
-						<table id="recipes">
+						<h3 class="underlined">In-progress</h3>
+						<table id="inProgressRecipes">
 							<tbody>
-								<!-- Will fill this with rows of recipeTemplate -->
+								<!-- Will fill this with rows of inProgressRecipeTemplate -->
+							</tbody>
+						</table>
+						<h3 class="underlined">Completed</h3>
+						<table id="completedRecipes">
+							<tbody>
+								<!-- Will fill this with rows of completedRecipeTemplate -->
 							</tbody>
 						</table>
 					</div>
 				</div>
 				<div id="upgradesColumn" class="upgradeColumn boxed">
-					<p id="upgradesHeader">Upgrades</p>
+					<h2 id="upgradesHeader">Upgrades</h2>
 					<div id="upgradesContent">
-						Upgrade Stuff
+						<h3 class="underlined">Available</h3>
+						<table id="availableUpgrades">
+							<tbody>
+								<!-- Will fill this with rows of availableUpgradeTemplate -->
+							</tbody>
+						</table>
+						<h3 class="underlined">Purchased</h3>
+						<table id="purchasedUpgrades">
+							<tbody>
+								<!-- Will fill this with rows of purchasedUpgradeTemplate -->
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>
 
-			<script type="text/template" id="recipeTemplate">
+			<script type="text/template" id="unownedIngredientTemplate">
+				<tr>
+					<td><%= img %></td>
+					<td class="spacer"></td>
+					<td><%= name %></td>
+					<td class="spacer"></td>
+					<td>Cost: $<%= cost %></td>
+					<td class="spacer"></td>
+					<td><div id=<%= ingredientId %> class="buttonLit" onclick="buyIngredient(<%= id %>);">Buy</div></td>
+				</tr>
+			</script>
+
+			<script type="text/template" id="ownedIngredientTemplate">
+				<tr>
+					<td><%= img %></td>
+					<td class="spacer"></td>
+					<td><%= name %></td>
+				</tr>
+			</script>
+
+			<script type="text/template" id="inProgressRecipeTemplate">
 				<tr>
 					<td><%= img %></td>
 					<td class="spacer"></td>
@@ -110,11 +159,21 @@
 				</tr>
 			</script>
 
-			<script type="text/template" id="ingredientTemplate">
+			<script type="text/template" id="inProgressRecipeTemplate">
+				<tr>
+					<td><%= img %></td>
+					<td class="spacer"></td>
+					<td><%= flavor %></td>
+					<td class="spacer"></td>
+					<td><%= ingredients %></td>
+				</tr>
+			</script>
+
+			<script type="text/template" id="availableUpgradeTemplate">
 
 			</script>
 
-			<script type="text/template" id="upgradeTemplate">
+			<script type="text/template" id="purchasedUpgradeTemplate">
 
 			</script>
 			<!-- End Upgrades -->
@@ -126,6 +185,7 @@
 		<script src="lib/underscore-min.js"></script>
 		<script src="lib/jquery.min.js"></script>
 
+		<script src="js/ingredient.js"></script>
 		<script src="js/donut.js"></script>
 		<script src="js/data.js"></script>
 		<script src="js/script.js"></script>

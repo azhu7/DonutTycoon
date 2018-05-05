@@ -9,7 +9,7 @@ html {
 }
 
 body {
-	background: url(../img/background1.jpg) no-repeat center center fixed;
+	background: url(../img/background.jpg) no-repeat center center fixed;
 	-webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -25,17 +25,16 @@ body {
 }
 
 #mainContainer {
-	max-width: 1500px;
-	text-align: center;
+	max-width: 80%;
 	display: inline;
 }
 
 #donutShopTab {
-	max-height: 800px;
+	max-height: 850px;
 }
 
 #upgradesTab {
-	max-height: 800px;
+	max-height: 850px;
 }
 
 .upgradeColumn {
@@ -45,41 +44,55 @@ body {
 	font-weight: bold;
 	overflow: auto;
 	flex: 25%;
-	min-height: 800px;
+	min-height: 700px;
+	min-width: 300px;
 }
 
 #ingredientsColumn {
 	background-color: lightpink;
+	text-align: center;
+}
+
+#unownedIngredients {
+	text-align: center;
+	min-width: 100%;
+}
+
+#ownedIngredients {
+	text-align: center;
+	margin-left: 20%;
+	margin-right: 20%;
+	min-width: 60%;
 }
 
 #recipesColumn {
 	background-color: lightgreen;
+	text-align: center;
 }
 
 #upgradesColumn {
 	background-color: lightyellow;
+	text-align: center;
 }
 
 #infoColumn {
-	margin-left: auto;
-	margin-right: auto;
 	text-align: center;
+	height: 800px;
 	font-size: 18px;
 	font-weight: bold;
 	background-color: lightblue;
 	overflow: auto;
 	flex: 60%;
-	min-height: 800px;
 }
 
 #infoFeed {
 	margin-left: auto;
 	margin-right: auto;
+	height: 800px;
 	background-color: lightgrey;
 	display: none;
 	overflow: auto;
 	flex: 20%;
-	min-height: 800px;
 }
 
 #feedHeader {
@@ -99,10 +112,14 @@ body {
 }
 
 #tablePane {
+	margin-left: auto;
+	margin-right: auto;
 	display: inline-block;
 	overflow-y: auto;
-	height: 500px;
-	min-width: 95%;
+	max-height: 500px;
+	background-color: lightgrey;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 #donutSelection {
@@ -149,14 +166,16 @@ body {
 .button, .buttonLit {
 	border: 1px solid black;
 	border-radius: 5px;
+	padding: 2px 10px 2px 10px;
 	cursor: pointer;
-	width: 15%;
+	display: inline-block;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
 
 .button {
 	background-color: #AAAAAA;
+	pointer-events: none;
 }
 
 .buttonLit {
@@ -177,6 +196,10 @@ body {
 
 .boxed {
 	border: 1px solid #ccc;
+}
+
+.underlined {
+	text-decoration: underline;
 }
 
 /** Tabs */

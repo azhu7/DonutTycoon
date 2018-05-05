@@ -40,6 +40,11 @@ function egg() {
     }
 }
 
+/**
+ * Switch to selected tab.
+ * @param  {Event} evt      Event that triggered this function.
+ * @param  {string} tabName Name of tab to open.
+ */
 function openTab(evt, tabName) {
     var tabcontent, tablinks;
 
@@ -58,6 +63,16 @@ function openTab(evt, tabName) {
     // Show the current tab, and add an "active" class to the button that opened the tab
     $(`#${tabName}`)[0].style.display = "flex";
     evt.target.className += " active";
+}
+
+/**
+ * Make sure everything is in check.
+ * @return {bool} True is invariants are held.
+ */
+function checkInvariants() {
+    // Player donuts, ingredients same length as constants
+    // Player num unlocked donuts less than max
+    return true;
 }
 
 /**
@@ -100,7 +115,25 @@ function flipPlayerInfo() {
     $("#message").html(message);
 }
 
-/** Switch to donut selection view. */
+/** Refresh the player info section. */
+function refreshPlayerInfo() {
+    if (player.gameState === GameState.Night) {
+        var dayInfo = `Night ${player.day}`;
+        var moneyInfo = displayMoney(player.money);
+        var message = "Select donuts to make for tomorrow!";
+    }
+    else {
+        var dayInfo = `Day ${player.day}`;
+        var moneyInfo = `${displayMoney(player.money)}. Profit: $${displayMoney(player.dayProfit)}.`
+        var message = "Serve the customers!";
+    }
+
+    $("#dayInfo").html(dayInfo);
+    $("#playerMoney").html(moneyInfo);
+    $("#message").html(message);
+}
+
+/** Populate list of donuts to select from. */
 function fillDonutSelection() {
     var donutInfoTemplate = _.template($("#donutInfoTemplate").html());
 
@@ -136,7 +169,7 @@ function fillDonutSelection() {
     }
 }
 
-/** Switch to donut sell view. */
+/** Populate list of donuts sold. */
 function fillDonutSell() {
     var donutSellTemplate = _.template($("#donutSellTemplate").html());
 
@@ -216,14 +249,13 @@ function genCustomerMoneyPerDonut(donutId) {
     var customerMoneyFactor = player.customerMoneyBase + Math.random() * player.customerMoneyRange;
     var donut = constants.donuts[donutId];
     var overallFactor = customerMoneyFactor * player.customerGenerosity * donut.rarity;
-    console.log(overallFactor);
     return roundMoney(donut.cost * overallFactor);
 }
 
 /** Simulate one day of customers. */
 async function simulateDay() {
     // Hide button until day is over
-    $("#startButton").attr("hidden", true);
+    $("#startButton").hide();
     var numCustomers = Math.ceil(player.shopLocation * player.popularity);
 
     for (var i = 0; i < numCustomers; ++i) {
@@ -246,13 +278,13 @@ async function simulateDay() {
         await sleep(player.customerDelayTime);
     }
 
-    $("#startButton").attr("hidden", false);
+    $("#startButton").show();
 }
 
 /** Switch to day view. */
 function startDay() {
     // Make sure we can start the day
-    var moneyRemaining = parseInt($("#lowerInfo").find("tr").eq(1).find("td").eq(0).text().split("$")[1]);
+    var moneyRemaining = parseFloat($("#lowerInfo").find("tr").eq(1).find("td").eq(0).text().split("$")[1]);
     if (isNaN(moneyRemaining)) {
         console.error("Money remaining is NaN.");
         return;
@@ -272,7 +304,7 @@ function startDay() {
     $("#startButton").text("End Day");
 
     // Hide lower info
-    $("#lowerInfo").attr("hidden", true);
+    $("#lowerInfo").hide();
 
     // Show stream
     $("#feedContent").empty();
@@ -293,7 +325,7 @@ function startNight() {
     $("#infoFeed").css({"display": "none"});
 
     // Show lower info
-    $("#lowerInfo").attr("hidden", false);
+    $("#lowerInfo").show();
 
     // Update button
     $("#startButton").attr("onclick", "startDay()");
@@ -302,6 +334,10 @@ function startNight() {
 
 /** Update total cost when user is selecting donut amounts. */
 function refreshTotalCost() {
+    if (player.gameState !== GameState.Night) {
+        return;  // Only refresh at night
+    }
+
     var totalCost = 0;
     for (var i = 0; i < constants.donuts.length; ++i) {
         if (!player.donuts[i]) {
@@ -329,7 +365,6 @@ function refreshTotalCost() {
 
     // Update lower info color and button type
     $("#lowerInfo").find("tr").eq(0).find("td").eq(0).css({"color": fontColor})
-    var button = $("#startButton");
     $("#startButton")[0].className = buttonClass;
 }
 
@@ -360,6 +395,75 @@ function customerBuy(donutId, numToBuy, customerMoneyPerDonut) {
     return numToBuy;
 }
 
+/** Populate list of ingredients. */
+function fillIngredients() {
+    var unownedIngredientTemplate = _.template($("#unownedIngredientTemplate").html());
+    var ownedIngredientTemplate = _.template($("#ownedIngredientTemplate").html());
+
+    // Populate ingredient menu
+    $("#unownedIngredients > tbody").empty();  // Clear old entries
+    $("#ownedIngredients > tbody").empty();  // Clear old entries
+
+    for (var i = 0; i < constants.ingredients.length; i++) {
+        var ingredient = constants.ingredients[i];
+        if (!player.ingredients[i]) {
+            var unownedIngredientInfo = unownedIngredientTemplate({
+                img: `<img src="img/${ingredient.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+                name: ingredient.name,
+                cost: displayMoney(ingredient.cost),
+                ingredientId: `ingredient${i}`,
+                id: i
+            });
+
+            $("#unownedIngredients > tbody").append(unownedIngredientInfo);
+            var canAfford = player.money >= ingredient.cost;
+            $(`#ingredient${i}`)[0].className = canAfford ? "buttonLit" : "button";
+        }
+        else {
+            var ownedIngredientInfo = ownedIngredientTemplate({
+                img: `<img src="img/${ingredient.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+                name: ingredient.name
+            });
+
+            $("#ownedIngredients > tbody").append(ownedIngredientInfo);
+        }
+    }
+}
+
+/** Populate list of recipes. */
+function fillRecipes() {
+
+}
+
+function buyIngredient(ingredientId) {
+    if (player.ingredients[ingredientId]) {
+        console.error(`Ingredient ${ingredientId} already owned.`);
+        return;
+    }
+
+    var ingredient = constants.ingredients[ingredientId];
+    if (player.money < ingredient.cost) {
+        console.error(`Cannot afford ingredient ${ingredientId}.`);
+        return;
+    }
+
+    player.money -= ingredient.cost;
+    player.ingredients[ingredientId] = 1;
+
+    // Update ingredients and recipe list
+    fillIngredients();
+    fillRecipes();
+}
+
+function refreshDonutShop() {
+    refreshPlayerInfo();
+    refreshTotalCost();
+}
+
+function refreshUpgrades() {
+    fillIngredients();
+}
+
 /** Runs on startup. */
 $(function() {
     console.log("Running start up code.");
@@ -369,7 +473,11 @@ $(function() {
 
     $("#versionNum").html(constants.version);
 
+    // Start at night
     startNight();
+
+    // Open default tab
+    $("#defaultOpen").click();
 
     if (debug.autosave) {
         setInterval(save, constants.saveIntervalInMilliseconds);
@@ -378,6 +486,9 @@ $(function() {
         console.warn("Autosave is turned off for development purposes.");
     }
 
-    $("#defaultOpen").click();
+    if (!checkInvariants()) {
+        console.error("Invariant check failed!");
+    }
+
     console.log("Finished start up code.");
 });

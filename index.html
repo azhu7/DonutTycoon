@@ -129,13 +129,14 @@
 				</div>
 			</div>
 
+			<!-- Begin Ingredient Templates -->
 			<script type="text/template" id="unownedIngredientTemplate">
 				<tr>
 					<td><%= img %></td>
 					<td class="spacer"></td>
 					<td><%= name %></td>
 					<td class="spacer"></td>
-					<td>Cost: $<%= cost %></td>
+					<td>$<%= cost %></td>
 					<td class="spacer"></td>
 					<td><div id=<%= ingredientId %> class="buttonLit" onclick="buyIngredient(<%= id %>);">Buy</div></td>
 				</tr>
@@ -148,27 +149,27 @@
 					<td><%= name %></td>
 				</tr>
 			</script>
-
+			<!-- End Ingredient Templates -->
+			<!-- Begin Recipe Templates -->
 			<script type="text/template" id="inProgressRecipeTemplate">
 				<tr>
 					<td><%= img %></td>
 					<td class="spacer"></td>
 					<td><%= flavor %></td>
 					<td class="spacer"></td>
-					<td><%= ingredients %></td>
+					<td><ul><%= ingredients %></ul></td>
 				</tr>
 			</script>
 
-			<script type="text/template" id="inProgressRecipeTemplate">
+			<script type="text/template" id="completedRecipeTemplate">
 				<tr>
 					<td><%= img %></td>
 					<td class="spacer"></td>
 					<td><%= flavor %></td>
-					<td class="spacer"></td>
-					<td><%= ingredients %></td>
 				</tr>
 			</script>
-
+			<!-- End Recipe Templates -->
+			<!-- Begin Upgrade Templates -->
 			<script type="text/template" id="availableUpgradeTemplate">
 
 			</script>
@@ -176,6 +177,7 @@
 			<script type="text/template" id="purchasedUpgradeTemplate">
 
 			</script>
+			<!-- End Upgrades Templates -->
 			<!-- End Upgrades -->
 		</div>
 		<!-- End Main Container -->

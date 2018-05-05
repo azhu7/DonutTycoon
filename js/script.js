@@ -133,6 +133,16 @@ function refreshPlayerInfo() {
     $("#message").html(message);
 }
 
+/** Refresh donut list depending on current GameState. */
+function refreshDonutList() {
+    if (player.gameState === GameState.Day) {
+        fillDonutSell();
+    }
+    else {
+        fillDonutSelection();
+    }
+}
+
 /** Populate list of donuts to select from. */
 function fillDonutSelection() {
     var donutInfoTemplate = _.template($("#donutInfoTemplate").html());
@@ -178,7 +188,7 @@ function fillDonutSell() {
     player.quantities = [];
     for (var i = 0; i < constants.donuts.length; i++) {
         if (!player.donuts[i]) {
-            player.sellPrices.push(0);
+            player.sellPrices.push(constants.donuts[i].cost);
             player.quantities.push(0);
         }
         else {
@@ -430,9 +440,54 @@ function fillIngredients() {
     }
 }
 
+/**
+ * Convert an array of items to html list syntax.
+ * "<li>array[0]</li>...<li>array[n-1]</li>"
+ * @param  {array} array        Items to convert to html list syntax
+ * @param  {function} transform Function to map items. Default map to self.
+ * @return {string}             Html list syntax
+ */
+function formatIngredientArrayAsHtml(array) {
+    var html = ""
+    array.forEach(function(item) {
+        var className = player.ingredients[item] ? "ownedIngredient" : "unownedIngredient";
+        html += `<li class="${className}">${constants.ingredients[item].name}</li>`;
+    });
+
+    return html;
+}
+
 /** Populate list of recipes. */
 function fillRecipes() {
+    var inProgressRecipeTemplate = _.template($("#inProgressRecipeTemplate").html());
+    var completedRecipeTemplate = _.template($("#completedRecipeTemplate").html());
 
+    // Populate ingredient menu
+    $("#inProgressRecipes > tbody").empty();  // Clear old entries
+    $("#completedRecipes > tbody").empty();  // Clear old entries
+
+    for (var i = 0; i < constants.donuts.length; i++) {
+        var donut = constants.donuts[i];
+        if (!player.donuts[i]) {
+            var inProgressRecipeInfo = inProgressRecipeTemplate({
+                img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+                flavor: donut.flavor,
+                ingredients: formatIngredientArrayAsHtml(donut.ingredients)
+            });
+
+            $("#inProgressRecipes > tbody").append(inProgressRecipeInfo);
+            //var canAfford = player.money >= ingredient.cost;
+            //$(`#ingredient${i}`)[0].className = canAfford ? "buttonLit" : "button";
+        }
+        else {
+            var completedRecipeInfo = completedRecipeTemplate({
+                img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+                flavor: donut.flavor
+            });
+
+            $("#completedRecipes > tbody").append(completedRecipeInfo);
+        }
+    }
 }
 
 function buyIngredient(ingredientId) {
@@ -450,6 +505,21 @@ function buyIngredient(ingredientId) {
     player.money -= ingredient.cost;
     player.ingredients[ingredientId] = 1;
 
+    // Update which recipes we have completed
+    for (var i = 0; i < constants.donuts.length; i++) {
+        if (player.donuts[i]) {
+            continue;  // Skip donuts we already own
+        }
+
+        if (constants.donuts[i].ingredients.every(ingredient => {
+            return player.ingredients[ingredient];
+        })) {
+            player.donuts[i] = 1;
+            player.numUnlocked++;
+            alert(`Unlocked donut flavor: ${constants.donuts[i].flavor}`);
+        }
+    }
+
     // Update ingredients and recipe list
     fillIngredients();
     fillRecipes();
@@ -457,11 +527,13 @@ function buyIngredient(ingredientId) {
 
 function refreshDonutShop() {
     refreshPlayerInfo();
+    refreshDonutList();
     refreshTotalCost();
 }
 
 function refreshUpgrades() {
     fillIngredients();
+    fillRecipes();
 }
 
 /** Runs on startup. */

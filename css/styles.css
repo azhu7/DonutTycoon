@@ -49,29 +49,45 @@ body {
 }
 
 #ingredientsColumn {
-	background-color: lightpink;
+	background-color: #e0eee0;
 	text-align: center;
 }
 
 #unownedIngredients {
-	text-align: center;
-	min-width: 100%;
+	margin-left: 10%;
+	margin-right: 10%;
+	min-width: 80%;
+	text-align: left;
 }
 
 #ownedIngredients {
-	text-align: center;
 	margin-left: 20%;
 	margin-right: 20%;
 	min-width: 60%;
+	text-align: center;
 }
 
 #recipesColumn {
-	background-color: lightgreen;
+	background-color: #f0f8ff;
+	text-align: center;
+}
+
+#inProgressRecipes {
+	margin-left: 10%;
+	margin-right: 10%;
+	min-width: 80%;
+	text-align: left;
+}
+
+#completedRecipes {
+	margin-left: 20%;
+	margin-right: 20%;
+	min-width: 60%;
 	text-align: center;
 }
 
 #upgradesColumn {
-	background-color: lightyellow;
+	background-color: #fff0f5;
 	text-align: center;
 }
 
@@ -80,7 +96,7 @@ body {
 	height: 800px;
 	font-size: 18px;
 	font-weight: bold;
-	background-color: lightblue;
+	background-color: #add8e6;
 	overflow: auto;
 	flex: 60%;
 }
@@ -88,8 +104,9 @@ body {
 #infoFeed {
 	margin-left: auto;
 	margin-right: auto;
+	padding: 0px 10px 0px 10px;
 	height: 800px;
-	background-color: lightgrey;
+	background-color: #d3d3d3;
 	display: none;
 	overflow: auto;
 	flex: 20%;
@@ -117,7 +134,7 @@ body {
 	display: inline-block;
 	overflow-y: auto;
 	max-height: 500px;
-	background-color: lightgrey;
+	background-color: #f5deb3;
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -127,6 +144,7 @@ body {
 	white-space: nowrap;
 	margin: 0 auto;
 	min-width: 90%;
+	padding: 10px;
 }
 
 #lowerInfo {
@@ -190,16 +208,20 @@ body {
 	width: 1%;
 }
 
-.totalCost {
-	color: 'green';
-}
-
 .boxed {
 	border: 1px solid #ccc;
 }
 
 .underlined {
 	text-decoration: underline;
+}
+
+.ownedIngredient {
+	color: green;
+}
+
+.unownedIngredient {
+	color: red;
 }
 
 /** Tabs */

@@ -116,7 +116,7 @@ function flipPlayerInfo() {
         // Switching to day
         player.gameState = GameState.Day;
         var dayInfo = `Day ${player.day}`;
-        var moneyInfo = `${displayMoney(player.money)}. Profit: $${displayMoney(player.dayProfit)}.`
+        var moneyInfo = `${displayMoney(player.money)}<br/>Profit: $${displayMoney(player.dayProfit)}`;
         var message = "Serve the customers!";
     }
 
@@ -291,6 +291,7 @@ function genCustomerMoneyPerDonut(donutId) {
     var customerMoneyFactor = player.customerMoneyBase + Math.random() * player.customerMoneyRange;
     var donut = constants.donuts[donutId];
     var overallFactor = customerMoneyFactor * player.customerGenerosity * donut.rarity;
+    console.log(`donutId: ${donutId}...factor: ${overallFactor}`);
     return roundMoney(donut.cost * overallFactor);
 }
 

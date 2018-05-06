@@ -16,7 +16,7 @@ var ShopLocation = Object.freeze({
 		new UpgradeTier("None", 0, 0),
 		new UpgradeTier("Home", 0, 25), 
 		new UpgradeTier("Stand", 10, 50),
-		new UpgradeTier("SmallShop", 50, 100),
+		new UpgradeTier("Small Shop", 50, 100),
 		new UpgradeTier("Large Shop", 150, 200),
 		new UpgradeTier("Factory", 300, 400)],
 	effectDescription: effect => {
@@ -29,9 +29,9 @@ var Popularity = Object.freeze({
 	tiers: [
 		new UpgradeTier("None", 0, 1),
 		new UpgradeTier("Posters", 25, 1.25),
-		new UpgradeTier("OnlineAds", 100, 1.5),
-		new UpgradeTier("TVAds", 200, 2),
-		new UpgradeTier("CelebrityEndorsement", 400, 3)],
+		new UpgradeTier("Online Ads", 100, 1.5),
+		new UpgradeTier("TV Ads", 200, 2),
+		new UpgradeTier("Celebrity Endorsement", 400, 3)],
 	effectDescription: effect => {
 		return `(${effect}x)`;
 	}
@@ -44,7 +44,7 @@ var Support = Object.freeze({
 		new UpgradeTier("Grandma", 0, 1),
 		new UpgradeTier("Friends", 25, 5),
 		new UpgradeTier("Sponsor", 100, 25),
-		new UpgradeTier("VentureCapital", 200, 100)],
+		new UpgradeTier("Venture Capital", 200, 100)],
 	effectDescription: effect => {
 		return `(+$${effect})`;
 	}
@@ -123,7 +123,7 @@ var constants = {
 			return Math.floor(player.upgrades[player.upgradeId.Shop].effect() * player.upgrades[player.upgradeId.Popularity].effect());
 		},
 		"The average customer pays a factor of: ": player => {
-			return (player.customerMoneyBase + 0.5 * player.customerMoneyRange) * player.customerGenerosity;
+			return `${(player.customerMoneyBase + 0.5 * player.customerMoneyRange) * player.customerGenerosity}x`;
 		},
 		"Average donuts per customer: ": player => {
 			return player.customerHunger;

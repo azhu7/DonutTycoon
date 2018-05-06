@@ -7,6 +7,16 @@
 var player = {};
 var debug = new Debug();
 
+function createNewPlayer() {
+    player = new Player();
+    if (debug.askPlayerName) {
+        player.name = prompt("Hello! What is your name?", "");
+    }
+    else {
+        console.warn("Player name is turned off for development purposes.");
+    }
+}
+
 /** Initialize player. */
 function init() {
     if (debug.loadSaved) {
@@ -15,14 +25,12 @@ function init() {
             load();
         }
         else {
-            player = new Player();
-            player.name = prompt("Hello! What is your name?", "");
+            createNewPlayer();
         }
     }
     else {
         console.warn("Loading is turned off for development purposes.");
-        player = new Player();
-        player.name = prompt("Hello! What is your name?", "");
+        createNewPlayer();
     }
 }
 
@@ -33,10 +41,10 @@ function egg() {
     }
 
     egg.clicks++;
-    if (egg.clicks == 3) {
+    if (egg.clicks === 3) {
         $("#header").text("Alex and Benicia's Donut Shop");
     }
-    else if (egg.clicks == 6) {
+    else if (egg.clicks === 6) {
         $("#header").text(`${player.name}'s Donut Shop`);
         egg.clicks = 0;
     }
@@ -147,7 +155,7 @@ function refreshDonutList() {
 
 /** Populate list of donuts to select from. */
 function fillDonutSelection() {
-    var donutInfoTemplate = _.template($("#donutInfoTemplate").html());
+    var donutCreateTemplate = _.template($("#donutCreateTemplate").html());
 
     // Populate donut menu
     $("#donutSelection > tbody").empty();  // Clear old entries
@@ -157,27 +165,25 @@ function fillDonutSelection() {
         }
 
         var donut = constants.donuts[i];
-        var donutInfo = donutInfoTemplate({
+        var donutInfo = donutCreateTemplate({
             img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
             flavor: donut.flavor,
             cost: displayMoney(donut.cost),
-            quantityId: `quantity${i}`,
+            createId: `create${i}`,
             sellForId: `sellFor${i}`
         });
 
         $("#donutSelection > tbody").append(donutInfo);
     }
 
-    // Fill with user's previous prices for subsequent days
-    if (player.day > 1) {
-        for (var i = 0; i < constants.donuts.length; i++) {
-            if (!player.donuts[i]) {
-                continue;
-            }
-
-            $(`#quantity${i}`).val(player.selectedQuantities[i]);
-            $(`#sellFor${i}`).val(player.sellPrices[i]);
+    // Fill with user's previous prices
+    for (var i = 0; i < constants.donuts.length; i++) {
+        if (!player.donuts[i]) {
+            continue;
         }
+
+        $(`#create${i}`).val(player.selectedQuantities[i]);
+        $(`#sellFor${i}`).val(player.sellPrices[i]);
     }
 
     $("#donutSelling").hide();
@@ -200,7 +206,7 @@ function fillDonutSell() {
             img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
             flavor: donut.flavor,
             cost: displayMoney(player.sellPrices[i]),
-            quantityId: `quantity${i}`,
+            sellId: `sell${i}`,
             quantity: player.quantities[i]
         });
 
@@ -223,7 +229,7 @@ function saveDonutSelection() {
         }
         else {
             player.sellPrices.push(parseFloat($(`#sellFor${i}`).val()));
-            player.quantities.push(parseInt($(`#quantity${i}`).val()));
+            player.quantities.push(parseInt($(`#create${i}`).val()));
         }
     }
 
@@ -292,7 +298,8 @@ function genCustomerMoneyPerDonut(donutId) {
 async function simulateDay() {
     // Hide button until day is over
     $("#startButton").hide();
-    var numCustomers = Math.ceil(player.shopLocation * player.popularity);
+    var numCustomers = Math.ceil(player.upgrades[player.upgradeId.Shop].effect() * player.upgrades[player.upgradeId.Popularity].effect());
+    console.log(`simlateDay() - # Customers: ${numCustomers}.`);
 
     for (var i = 0; i < numCustomers; ++i) {
         var name = constants.names[Math.floor(Math.random() * constants.names.length)];
@@ -353,7 +360,7 @@ function startDay() {
 /** Switch to night view. */
 function startNight() {
     player.day += 1;
-    player.money += player.support;
+    player.money += player.upgrades[player.upgradeId.Support].effect();
 
     flipPlayerInfo();
     fillDonutSelection();
@@ -381,7 +388,7 @@ function refreshTotalCost() {
             continue;
         }
 
-        var quantity = parseInt($(`#quantity${i}`).val());
+        var quantity = parseInt($(`#create${i}`).val());
         if (isNaN(quantity)) {
             continue;
         }
@@ -427,7 +434,7 @@ function customerBuy(donutId, numToBuy, customerMoneyPerDonut) {
     player.money += numToBuy * donutPrice;
     player.dayProfit += numToBuy * donutPrice;
     player.quantities[donutId] -= numToBuy;
-    $(`#quantity${donutId}`).html(`Quantity: ${player.quantities[donutId]}`);
+    $(`#sell${donutId}`).html(`Quantity: ${player.quantities[donutId]}`);
     $("#playerMoney").html(`${displayMoney(player.money)}. Profit: $${displayMoney(player.dayProfit)}.`);
     return numToBuy;
 }
@@ -454,7 +461,7 @@ function fillIngredients() {
 
             $("#unownedIngredients > tbody").append(unownedIngredientInfo);
             var canAfford = player.money >= ingredient.cost;
-            $(`#ingredient${i}`)[0].className = canAfford ? "buttonLit" : "button";
+            $(`#ingredient${i}`)[0].className = "upgradeButton " + (canAfford ? "buttonLit" : "button");
         }
         else {
             var ownedIngredientInfo = ownedIngredientTemplate({
@@ -546,7 +553,7 @@ function buyIngredient(ingredientId) {
         })) {
             player.donuts[i] = 1;
             player.numUnlocked++;
-            alert(`Unlocked donut flavor: ${constants.donuts[i].flavor}`);
+            console.info(`Unlocked donut flavor: ${constants.donuts[i].flavor}`);
         }
     }
 
@@ -555,18 +562,60 @@ function buyIngredient(ingredientId) {
     fillRecipes();
 }
 
+/** Populate list of upgrades. */
+function fillUpgrades() {
+    var upgradeTemplate = _.template($("#upgradeTemplate").html());
+
+    $("#upgrades > tbody").empty();  // Clear old entries
+    for (var i = 0; i < player.upgrades.length; i++) {
+        var upgrade = player.upgrades[i];
+        var upgradeInfo = upgradeTemplate({
+            upgradeId: `upgrade${i}`,
+            id: i,
+            name: upgrade.name,
+            description: upgrade.description,
+            current: upgrade.displayTier(upgrade.current),
+            next: upgrade.displayTier(upgrade.current + 1),
+            cost: upgrade.cost()
+        });
+
+        $("#upgrades > tbody").append(upgradeInfo);
+        var canAfford = player.money >= upgrade.cost();
+        $(`#upgrade${i}`)[0].className = "upgradeButton " + (canAfford ? "buttonLit" : "button");
+    }
+}
+
+/** Handle purchasing upgrade. Assume can afford ingredient. */
+function buyUpgrade(upgradeId) {
+    if (player.money < player.upgrades[upgradeId].cost) {
+        console.error(`Cannot afford upgrade ${upgradeId}.`);
+        return;
+    }
+
+    player.money -= player.upgrades[upgradeId].cost();
+    player.upgrades[upgradeId].upgrade();
+    fillUpgrades();
+}
+
 /** Refresh donut shop tab components. */
-function refreshDonutShop() {
+function openDonutShop(event) {
     refreshPlayerInfo();
     refreshDonutList();
     fillAdvisor();
     refreshTotalCost();
+
+    openTab(event, 'donutShopTab');
 }
 
 /** Refresh upgrade tab components. */
-function refreshUpgrades() {
+function openUpgrades(event) {
+    saveDonutSelection();
+
     fillIngredients();
     fillRecipes();
+    fillUpgrades();
+
+    openTab(event, 'upgradesTab');
 }
 
 /** Runs on startup. */

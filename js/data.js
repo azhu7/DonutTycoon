@@ -94,7 +94,8 @@ function Player() {
 
 	// Other
 	this.name = "Hippo";
-	this.customerDelayTime = 500;  // Time between customers in milliseconds
+	this.feedTotalTime = 4000;  // Time for feed to run
+	this.maxCustomerFeedDelayTime = 500;
 }
 
 function Debug() {

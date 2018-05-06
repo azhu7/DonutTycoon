@@ -301,6 +301,7 @@ async function simulateDay() {
     $("#startButton").hide();
     var numCustomers = Math.ceil(player.upgrades[player.upgradeId.Shop].effect() * player.upgrades[player.upgradeId.Popularity].effect());
     console.log(`simlateDay() - # Customers: ${numCustomers}.`);
+    var customerFeedDelayTime = Math.min(player.feedTotalTime / numCustomers, player.maxCustomerFeedDelayTime);
 
     for (var i = 0; i < numCustomers; ++i) {
         var name = constants.names[Math.floor(Math.random() * constants.names.length)];
@@ -319,7 +320,7 @@ async function simulateDay() {
         }
 
         $("#infoFeed").scrollTop($("#infoFeed")[0].scrollHeight);
-        await sleep(player.customerDelayTime);
+        await sleep(customerFeedDelayTime);
     }
 
     $("#startButton").show();

@@ -5,13 +5,14 @@
  */
 
 var player = {};
-var debug = new Debug();
-var logger = new Logger(debug.saveLogs, debug.logFilename);
+var logger = new Logger(debug.saveLogs, debug.infoFilename);
 
 function createNewPlayer() {
+    logger.info("Creating new player.");
     player = new Player();
     if (debug.askPlayerName) {
         player.name = prompt("Hello! What is your name?", "");
+        logger.info(`Player name is ${player.name}.`);
     }
     else {
         logger.warn("Player name is turned off for development purposes.");
@@ -22,7 +23,7 @@ function createNewPlayer() {
 function init() {
     if (debug.loadSaved) {
         if (localStorage.getItem(constants.savedPlayer)) {
-            logger.log("Found saved file. Loading.");
+            logger.info("Found saved file. Loading.");
             load();
         }
         else {
@@ -104,44 +105,28 @@ function displayMoney(amount) {
     return parseFloat(roundMoney(amount)).toFixed(2);
 }
 
-/** Set player info based on current gameState (Day/Night). */
-function flipPlayerInfo() {
-    if (player.gameState === GameState.Day) {
-        // Switching to night
-        player.gameState = GameState.Night;
-        var dayInfo = `Night ${player.day}`;
-        var moneyInfo = displayMoney(player.money);
-        var message = "Select donuts to make for tomorrow!";
-    }
-    else {
-        // Switching to day
-        player.gameState = GameState.Day;
-        var dayInfo = `Day ${player.day}`;
-        var moneyInfo = `${displayMoney(player.money)}<br/>Profit: $${displayMoney(player.dayProfit)}`;
-        var message = "Serve the customers!";
-    }
-
-    $("#dayInfo").html(dayInfo);
-    $("#playerMoney").html(moneyInfo);
-    $("#message").html(message);
+/** Format night player info. */
+function setNightPlayerInfo() {
+    $("#dayInfo").html(`Night ${player.day}`);
+    $("#playerMoney").html(displayMoney(player.money));
+    $("#message").html("Select donuts to make for tomorrow!");
 }
 
-/** Refresh the player info section. */
+/** Format day player info. */
+function setDayPlayerInfo() {
+    $("#dayInfo").html(`Day ${player.day}`);
+    $("#playerMoney").html(`${displayMoney(player.money)}<br/>Profit: $${displayMoney(player.dayProfit)}`);
+    $("#message").html("Serve the customers!");
+}
+
+/** Refresh the player info section depending on current GameState. */
 function refreshPlayerInfo() {
     if (player.gameState === GameState.Night) {
-        var dayInfo = `Night ${player.day}`;
-        var moneyInfo = displayMoney(player.money);
-        var message = "Select donuts to make for tomorrow!";
+        setNightPlayerInfo();
     }
     else {
-        var dayInfo = `Day ${player.day}`;
-        var moneyInfo = `${displayMoney(player.money)}. Profit: $${displayMoney(player.dayProfit)}.`
-        var message = "Serve the customers!";
+        setDayPlayerInfo();
     }
-
-    $("#dayInfo").html(dayInfo);
-    $("#playerMoney").html(moneyInfo);
-    $("#message").html(message);
 }
 
 /** Refresh donut list depending on current GameState. */
@@ -253,6 +238,10 @@ function saveDonutSelection() {
 
 /** Populate advisor information. */
 function fillAdvisor() {
+    if (player.gameState !== GameState.Night) {
+        return;  // Only fill at night
+    }
+
     var advisorTemplate = _.template($("#advisorTemplate").html());
 
     $("#advisorContent > tbody").empty();
@@ -306,7 +295,7 @@ function genCustomerMoneyPerDonut(donutId) {
     var customerMoneyFactor = player.customerMoneyBase + Math.random() * player.customerMoneyRange;
     var donut = constants.donuts[donutId];
     var overallFactor = customerMoneyFactor * player.customerGenerosity * donut.rarity;
-    //logger.log(`donutId: ${donutId}...factor: ${overallFactor}`);
+    //logger.info(`donutId: ${donutId}...factor: ${overallFactor}`);
     return roundMoney(donut.cost * overallFactor);
 }
 
@@ -314,9 +303,9 @@ function genCustomerMoneyPerDonut(donutId) {
 async function simulateDay() {
     // Hide button until day is over
     $("#startButton").hide();
-    var numCustomers = Math.ceil(player.upgrades[player.upgradeId.Shop].effect() * player.upgrades[player.upgradeId.Popularity].effect());
-    logger.log(`simlateDay() - # Customers: ${numCustomers}.`);
-    var customerFeedDelayTime = Math.min(player.feedTotalTime / numCustomers, player.maxCustomerFeedDelayTime);
+    var numCustomers = Math.ceil(constants.upgrades[constants.upgradeId.Shop].effect() * constants.upgrades[constants.upgradeId.Popularity].effect());
+    logger.info(`simlateDay() - # Customers: ${numCustomers}.`);
+    var customerFeedDelayTime = Math.min(player.feedTotalTime / numCustomers, player.maxCustomerFeedDelay);
 
     for (var i = 0; i < numCustomers; ++i) {
         var name = constants.names[Math.floor(Math.random() * constants.names.length)];
@@ -350,13 +339,18 @@ function startDay() {
         return;
     }
     else if (moneyRemaining < 0) {
-        logger.log("Not enough money.")
+        logger.error("Not enough money.")
         return;
     }
 
+    player.gameState = GameState.Day;
+
+    // Apply cost to make donuts
     player.dayProfit = moneyRemaining - player.money;  // Negative profits
     player.money = moneyRemaining;
-    flipPlayerInfo();
+
+    // Populate UI
+    setDayPlayerInfo();
     saveDonutSelection();
     fillDonutSell();
 
@@ -372,14 +366,23 @@ function startDay() {
     $("#feedContent").empty();
     $("#infoFeed").css({"display": "inline-block"});
     simulateDay();
+
+    // Apply end of day effects.
+    // Important because on load, we always start at night, so if player exits
+    // before manually ending the day, we would like to start on the next night.
+    player.day += 1;
+    player.money += constants.upgrades[constants.upgradeId.Support].effect();
+    logger.info(`Ending day. Day is now ${player.day}.`);
+    logger.info(`Applying passive income. Player now has $${player.money}.`);
 }
 
 /** Switch to night view. */
 function startNight() {
-    player.day += 1;
-    player.money += player.upgrades[player.upgradeId.Support].effect();
+    logger.info(`Starting night ${player.day}.`);
+    player.gameState = GameState.Night;
 
-    flipPlayerInfo();
+    // Populate UI
+    setNightPlayerInfo();
     fillDonutSelection();
     fillAdvisor();
     refreshTotalCost();
@@ -585,8 +588,8 @@ function fillUpgrades() {
     var upgradeTemplate = _.template($("#upgradeTemplate").html());
 
     $("#upgrades > tbody").empty();  // Clear old entries
-    for (var i = 0; i < player.upgrades.length; i++) {
-        var upgrade = player.upgrades[i];
+    for (var i = 0; i < constants.upgrades.length; i++) {
+        var upgrade = constants.upgrades[i];
         var upgradeInfo = upgradeTemplate({
             upgradeId: `upgrade${i}`,
             id: i,
@@ -605,13 +608,13 @@ function fillUpgrades() {
 
 /** Handle purchasing upgrade. Assume can afford ingredient. */
 function buyUpgrade(upgradeId) {
-    if (player.money < player.upgrades[upgradeId].cost) {
+    if (player.money < constants.upgrades[upgradeId].cost()) {
         logger.error(`Cannot afford upgrade ${upgradeId}.`);
         return;
     }
 
-    player.money -= player.upgrades[upgradeId].cost();
-    player.upgrades[upgradeId].upgrade();
+    player.money -= constants.upgrades[upgradeId].cost();
+    constants.upgrades[upgradeId].upgrade();
     fillUpgrades();
 }
 
@@ -638,7 +641,7 @@ function openUpgrades(event) {
 
 /** Runs on startup. */
 $(function() {
-    logger.log("Running start up code.");
+    logger.info("Running start up code.");
 
     // Initialize player
     init();
@@ -657,11 +660,11 @@ $(function() {
     }
 
     if (debug.autosave) {
-        setInterval(save, constants.saveIntervalInMilliseconds);
+        setInterval(save, constants.saveInterval);
     }
     else {
         logger.warn("Autosave is turned off for development purposes.");
     }
 
-    logger.log("Finished start up code.");
+    logger.info("Finished start up code.");
 });

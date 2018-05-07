@@ -55,8 +55,8 @@ function Player() {
 	// Game info
 	this.money = 20;
 	this.dayProfit = 0;
-	this.day = 0;
-	this.gameState = GameState.Day;
+	this.day = 1;
+	this.gameState = GameState.Night;
 
 	// Donuts
 	this.ingredients = new Array(constants.ingredients.length).fill(0);  // Track all ingredients by index
@@ -72,17 +72,8 @@ function Player() {
 		this.sellPrices.push(donut.cost);
 	});
 
-	this.upgradeId = Object.freeze({
-		Shop:0,
-		Support:1,
-		Popularity:2
-	}),
-
-	this.upgrades = [
-		new Upgrade("Shop", "Affects number of customers.", ShopLocation.tiers, ShopLocation.effectDescription),
-		new Upgrade("Support", "Affects passive income.", Support.tiers, Support.effectDescription),
-		new Upgrade("Popularity", "Affects number of customers.", Popularity.tiers, Popularity.effectDescription)
-	],
+	// Must store copy of levels here to update constants.upgrades on load
+	this.upgradeLevels = new Array(constants.upgrades.length).fill(0);
 
 	// Customer Income
 	this.customerMoneyRange = 1;  // Factor range for customer $
@@ -94,18 +85,30 @@ function Player() {
 	// Other
 	this.name = "Hippo";
 	this.feedTotalTime = 4000;  // Time for feed to run
-	this.maxCustomerFeedDelayTime = 500;
+	this.maxCustomerFeedDelay = 500;
 }
 
-function Debug() {
-	this.loadSaved = false;
-	this.autosave = false;
-	this.askPlayerName = false;
-	this.saveLogs = true;
-	this.logFilename = "logs.json";
+/** Debug settings. */
+var debug = {
+	loadSaved: true,
+	autosave: true,
+	askPlayerName: false,
+	saveLogs: true,
+	logFilename: "logs.json"
 }
 
-/** Constant strings. */
+/** Donut shop leaderboard. */
+var salesChart = [
+	["Dooby Donuts", 20000],
+	["Ypsilanti Dairy", 14000],
+	["Crunchy Creme", 8000],
+	["Moo Moo Pâtisserie", 1000],
+	["Bob's Bakery", 200],
+	["Ratch Donuts", 50],
+	["Ohio's Best Donuts", 10]
+];
+
+/** Constants. */
 var constants = {
 	ingredients: [
 		new Ingredient("Dough",0,"i_dough.jpg"),
@@ -120,9 +123,21 @@ var constants = {
 		new Donut("Glazed Chocolate",2,1.1,[0,1,2],"d_glazed_chocolate.jpg"),
 		new Donut("Chocolate + Sprinkles",2,1.11,[0,2,3],"d_chocolate_sprinkles.jpg")],
 
+	upgradeId: Object.freeze({
+		Shop:0,
+		Support:1,
+		Popularity:2
+	}),
+
+	upgrades: [
+		new Upgrade("Shop", "Affects number of customers.", ShopLocation.tiers, ShopLocation.effectDescription),
+		new Upgrade("Support", "Affects passive income.", Support.tiers, Support.effectDescription),
+		new Upgrade("Popularity", "Affects number of customers.", Popularity.tiers, Popularity.effectDescription)
+	],
+
 	advisor: {
 		"Projected number of customers: ": player => {
-			return Math.floor(player.upgrades[player.upgradeId.Shop].effect() * player.upgrades[player.upgradeId.Popularity].effect());
+			return Math.floor(constants.upgrades[constants.upgradeId.Shop].effect() * constants.upgrades[constants.upgradeId.Popularity].effect());
 		},
 		"The average customer pays a factor of: ": player => {
 			return `${(player.customerMoneyBase + 0.5 * player.customerMoneyRange) * player.customerGenerosity}x`;
@@ -132,7 +147,7 @@ var constants = {
 		},
 		"": player => { return ""; },
 		"Passive income: ": player => {
-			return `$${player.upgrades[player.upgradeId.Support].effect()}`;
+			return `$${constants.upgrades[constants.upgradeId.Support].effect()}`;
 		},
 	},
 
@@ -140,5 +155,6 @@ var constants = {
 
 	imgSize: 64,
     savedPlayer: "playerSave",
-    version: "0.9.2"
+    saveInterval: 3000,  // In milliseconds
+    version: "0.9.4"
 };

@@ -59,19 +59,17 @@ function Player() {
 	this.gameState = GameState.Day;
 
 	// Donuts
-	this.ingredients = [0, 0, 0, 0];  // Track all ingredients by index
-	this.donuts = [0, 0, 0, 0, 0];    // Track all donuts by index
-	this.unlockedDonuts = new Set();		  // Set of unlocked donut ids
-	this.lockedDonuts = new Set();			  // Set of locked donut ids
-	this.sellPrices = [];		      // Remember selected
-	this.quantities = [];		      // Track current quantities
-	this.selectedQuantities = [];     // Remember selected
+	this.ingredients = new Array(constants.ingredients.length).fill(0);  // Track all ingredients by index
+	this.donuts = new Array(constants.donuts.length).fill(0);  // Track all donuts by index
+	this.unlockedDonuts = new Set();  // Unlocked donut ids
+	this.lockedDonuts = new Set([...Array(constants.donuts.length).keys()]);  // Locked donut ids
+	this.sellPrices = new Array();  // Remember selected
+	this.quantities = new Array(constants.donuts.length).fill(0);  // Track current quantities
+	this.selectedQuantities = new Array(constants.donuts.length).fill(0);  // Remember selected
 
 	// Default initialize donut trackers
 	constants.donuts.forEach(donut => {
 		this.sellPrices.push(donut.cost);
-		this.quantities.push(0);
-		this.selectedQuantities.push(0);
 	});
 
 	this.upgradeId = Object.freeze({

@@ -570,6 +570,7 @@ function buyIngredient(ingredientId) {
         })) {
             player.donuts[i] = 1;
             player.unlockedDonuts.add(i);
+            player.lockedDonuts.delete(i);
             logger.info(`Unlocked donut flavor: ${constants.donuts[i].flavor}`);
         }
     }

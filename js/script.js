@@ -234,12 +234,12 @@ function saveDonutSelection() {
         }
         else {
             var sellPrice = parseFloat($(`#sellFor${i}`).val());
-            if (isNan(sellPrice)) {
+            if (isNaN(sellPrice)) {
                 logger.error(`Sell price for donut ${i} is NaN.`);
             }
 
             var quantity = parseInt($(`#create${i}`).val());
-            if (isNan(quantity)) {
+            if (isNaN(quantity)) {
                 logger.error(`Quantity for donut ${i} is NaN.`);                
             }
 

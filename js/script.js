@@ -177,7 +177,7 @@ function fillDonutSelection() {
         $("#donutSelection > tbody").append(donutInfo);
     }
 
-    if (!player.unlockedDonuts.length) {
+    if (!player.unlockedDonuts.size) {
         $("#donutSelection > tbody").append("No donuts. Head to the Upgrades tab to buy some ingredients!");
     }
 
@@ -569,7 +569,7 @@ function buyIngredient(ingredientId) {
             return player.ingredients[ingredient];
         })) {
             player.donuts[i] = 1;
-            //player.unlockedDonuts.push(i);
+            player.unlockedDonuts.add(i);
             logger.info(`Unlocked donut flavor: ${constants.donuts[i].flavor}`);
         }
     }

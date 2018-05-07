@@ -61,8 +61,8 @@ function Player() {
 	// Donuts
 	this.ingredients = [0, 0, 0, 0];  // Track all ingredients by index
 	this.donuts = [0, 0, 0, 0, 0];    // Track all donuts by index
-	this.unlockedDonuts = {};		  // Set of unlocked donut ids
-	this.lockedDonuts = {};			  // Set of locked donut ids
+	this.unlockedDonuts = new Set();		  // Set of unlocked donut ids
+	this.lockedDonuts = new Set();			  // Set of locked donut ids
 	this.sellPrices = [];		      // Remember selected
 	this.quantities = [];		      // Track current quantities
 	this.selectedQuantities = [];     // Remember selected

@@ -10,7 +10,12 @@
 	</head>
 
 	<body>
-		<div>Instructions</div>
+		<div>
+			<div>
+				<div class="buttonLit"><a href="instructions.html" target="_newtab">Instructions</a></div>
+				<div class="buttonLit" onclick="logger.download()">Save Logs</div>
+			</div>
+		</div>
 		<div><a href="https://github.com/azhu7/DonutTycoon"></a></div>
 		<h1 id="header" onclick="egg();"></h1>
 
@@ -243,6 +248,7 @@
 		<script src="lib/underscore-min.js"></script>
 		<script src="lib/jquery.min.js"></script>
 
+		<script src="js/debug.js"></script>
 		<script src="js/ingredient.js"></script>
 		<script src="js/donut.js"></script>
 		<script src="js/upgrade.js"></script>

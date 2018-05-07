@@ -6,6 +6,7 @@
 
 var player = {};
 var debug = new Debug();
+var logger = new Logger(debug.saveLogs, debug.logFilename);
 
 function createNewPlayer() {
     player = new Player();
@@ -13,7 +14,7 @@ function createNewPlayer() {
         player.name = prompt("Hello! What is your name?", "");
     }
     else {
-        console.warn("Player name is turned off for development purposes.");
+        logger.warn("Player name is turned off for development purposes.");
     }
 }
 
@@ -21,7 +22,7 @@ function createNewPlayer() {
 function init() {
     if (debug.loadSaved) {
         if (localStorage.getItem(constants.savedPlayer)) {
-            console.log("Found saved file. Loading.");
+            logger.log("Found saved file. Loading.");
             load();
         }
         else {
@@ -29,7 +30,7 @@ function init() {
         }
     }
     else {
-        console.warn("Loading is turned off for development purposes.");
+        logger.warn("Loading is turned off for development purposes.");
         createNewPlayer();
     }
 }
@@ -176,6 +177,10 @@ function fillDonutSelection() {
         $("#donutSelection > tbody").append(donutInfo);
     }
 
+    if (!player.unlockedDonuts.length) {
+        $("#donutSelection > tbody").append("No donuts. Head to the Upgrades tab to buy some ingredients!");
+    }
+
     // Fill with user's previous prices
     for (var i = 0; i < constants.donuts.length; i++) {
         if (!player.donuts[i]) {
@@ -228,8 +233,18 @@ function saveDonutSelection() {
             player.quantities.push(0);
         }
         else {
-            player.sellPrices.push(parseFloat($(`#sellFor${i}`).val()));
-            player.quantities.push(parseInt($(`#create${i}`).val()));
+            var sellPrice = parseFloat($(`#sellFor${i}`).val());
+            if (isNan(sellPrice)) {
+                logger.error(`Sell price for donut ${i} is NaN.`);
+            }
+
+            var quantity = parseInt($(`#create${i}`).val());
+            if (isNan(quantity)) {
+                logger.error(`Quantity for donut ${i} is NaN.`);                
+            }
+
+            player.sellPrices.push(sellPrice);
+            player.quantities.push(quantity);
         }
     }
 
@@ -266,10 +281,10 @@ function sleep(ms) {
  */
 function selectDonut() {
     function roll() {
-        return Math.floor(Math.random() * Math.min(player.donuts.length, player.numUnlocked + 2));
+        return Math.floor(Math.random() * player.donuts.length);
     }
 
-    // Select ID from the first {numUnlocked + 2} donuts
+    // Select ID
     var donutId = roll();
     var rerolls = player.customerReconsider;
     while (!player.quantities[donutId] && rerolls) {
@@ -291,7 +306,7 @@ function genCustomerMoneyPerDonut(donutId) {
     var customerMoneyFactor = player.customerMoneyBase + Math.random() * player.customerMoneyRange;
     var donut = constants.donuts[donutId];
     var overallFactor = customerMoneyFactor * player.customerGenerosity * donut.rarity;
-    console.log(`donutId: ${donutId}...factor: ${overallFactor}`);
+    //logger.log(`donutId: ${donutId}...factor: ${overallFactor}`);
     return roundMoney(donut.cost * overallFactor);
 }
 
@@ -300,7 +315,7 @@ async function simulateDay() {
     // Hide button until day is over
     $("#startButton").hide();
     var numCustomers = Math.ceil(player.upgrades[player.upgradeId.Shop].effect() * player.upgrades[player.upgradeId.Popularity].effect());
-    console.log(`simlateDay() - # Customers: ${numCustomers}.`);
+    logger.log(`simlateDay() - # Customers: ${numCustomers}.`);
     var customerFeedDelayTime = Math.min(player.feedTotalTime / numCustomers, player.maxCustomerFeedDelayTime);
 
     for (var i = 0; i < numCustomers; ++i) {
@@ -331,11 +346,11 @@ function startDay() {
     // Make sure we can start the day
     var moneyRemaining = parseFloat($("#lowerInfo").find("tr").eq(1).find("td").eq(0).text().split("$")[1]);
     if (isNaN(moneyRemaining)) {
-        console.error("Money remaining is NaN.");
+        logger.error("Money remaining is NaN.");
         return;
     }
     else if (moneyRemaining < 0) {
-        console.log("Not enough money.")
+        logger.log("Not enough money.")
         return;
     }
 
@@ -530,13 +545,13 @@ function fillRecipes() {
  */
 function buyIngredient(ingredientId) {
     if (player.ingredients[ingredientId]) {
-        console.error(`Ingredient ${ingredientId} already owned.`);
+        logger.error(`Ingredient ${ingredientId} already owned.`);
         return;
     }
 
     var ingredient = constants.ingredients[ingredientId];
     if (player.money < ingredient.cost) {
-        console.error(`Cannot afford ingredient ${ingredientId}.`);
+        logger.error(`Cannot afford ingredient ${ingredientId}.`);
         return;
     }
 
@@ -554,8 +569,8 @@ function buyIngredient(ingredientId) {
             return player.ingredients[ingredient];
         })) {
             player.donuts[i] = 1;
-            player.numUnlocked++;
-            console.info(`Unlocked donut flavor: ${constants.donuts[i].flavor}`);
+            //player.unlockedDonuts.push(i);
+            logger.info(`Unlocked donut flavor: ${constants.donuts[i].flavor}`);
         }
     }
 
@@ -590,7 +605,7 @@ function fillUpgrades() {
 /** Handle purchasing upgrade. Assume can afford ingredient. */
 function buyUpgrade(upgradeId) {
     if (player.money < player.upgrades[upgradeId].cost) {
-        console.error(`Cannot afford upgrade ${upgradeId}.`);
+        logger.error(`Cannot afford upgrade ${upgradeId}.`);
         return;
     }
 
@@ -622,7 +637,7 @@ function openUpgrades(event) {
 
 /** Runs on startup. */
 $(function() {
-    console.log("Running start up code.");
+    logger.log("Running start up code.");
 
     // Initialize player
     init();
@@ -637,15 +652,15 @@ $(function() {
     $("#defaultOpen").click();
 
     if (!checkInvariants()) {
-        console.error("Invariant check failed!");
+        logger.error("Invariant check failed!");
     }
 
     if (debug.autosave) {
         setInterval(save, constants.saveIntervalInMilliseconds);
     }
     else {
-        console.warn("Autosave is turned off for development purposes.");
+        logger.warn("Autosave is turned off for development purposes.");
     }
 
-    console.log("Finished start up code.");
+    logger.log("Finished start up code.");
 });

@@ -59,12 +59,13 @@ function Player() {
 	this.gameState = GameState.Day;
 
 	// Donuts
-	this.ingredients = [1, 0, 0, 0];
-	this.donuts = [1, 0, 0, 0, 0];
-	this.numUnlocked = 1;		   // Number of unlocked donuts
-	this.sellPrices = [];		   // Remember selected
-	this.quantities = [];		   // Track current quantities
-	this.selectedQuantities = [];  // Remember selected
+	this.ingredients = [0, 0, 0, 0];  // Track all ingredients by index
+	this.donuts = [0, 0, 0, 0, 0];    // Track all donuts by index
+	this.unlockedDonuts = {};		  // Set of unlocked donut ids
+	this.lockedDonuts = {};			  // Set of locked donut ids
+	this.sellPrices = [];		      // Remember selected
+	this.quantities = [];		      // Track current quantities
+	this.selectedQuantities = [];     // Remember selected
 
 	// Default initialize donut trackers
 	constants.donuts.forEach(donut => {
@@ -102,6 +103,8 @@ function Debug() {
 	this.loadSaved = false;
 	this.autosave = false;
 	this.askPlayerName = false;
+	this.saveLogs = true;
+	this.logFilename = "logs.json";
 }
 
 /** Constant strings. */

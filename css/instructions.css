@@ -1,0 +1,37 @@
+body {
+	background: url(../img/instruction_background.png) no-repeat center center fixed;
+	-webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+	max-width: 1100px;
+	font-size: 22px;
+	margin-left: 1%;
+}
+
+h1, h2 {
+	text-align: center;
+}
+
+h3 {
+	text-decoration: underline;
+}
+
+td {
+	text-align: left
+}
+
+ul {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.emphasize {
+	font-style: italic;
+	font-weight: bold;
+}
+
+.tableArrow {
+	padding-left: 10px;
+	padding-right: 10px;
+}

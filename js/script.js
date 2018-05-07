@@ -167,7 +167,7 @@ function fillDonutSelection() {
 
         var donut = constants.donuts[i];
         var donutInfo = donutCreateTemplate({
-            img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+            img: `<img src="img/${donut.imagePath}" style="max-height: ${constants.imgSize}px; max-width: ${constants.imgSize}px;" />`,
             flavor: donut.flavor,
             cost: displayMoney(donut.cost),
             createId: `create${i}`,
@@ -208,7 +208,7 @@ function fillDonutSell() {
 
         var donut = constants.donuts[i];
         var donutInfo = donutSellTemplate({
-            img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+            img: `<img src="img/${donut.imagePath}" style="max-height: ${constants.imgSize}px; max-width: ${constants.imgSize}px;" />`,
             flavor: donut.flavor,
             cost: displayMoney(player.sellPrices[i]),
             sellId: `sell${i}`,
@@ -469,7 +469,7 @@ function fillIngredients() {
         var ingredient = constants.ingredients[i];
         if (!player.ingredients[i]) {
             var unownedIngredientInfo = unownedIngredientTemplate({
-                img: `<img src="img/${ingredient.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+                img: `<img src="img/${ingredient.imagePath}" style="max-height: ${constants.imgSize}px; max-width: ${constants.imgSize}px;" />`,
                 name: ingredient.name,
                 cost: displayMoney(ingredient.cost),
                 ingredientId: `ingredient${i}`,
@@ -482,7 +482,7 @@ function fillIngredients() {
         }
         else {
             var ownedIngredientInfo = ownedIngredientTemplate({
-                img: `<img src="img/${ingredient.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+                img: `<img src="img/${ingredient.imagePath}" style="max-height: ${constants.imgSize}px; max-width: ${constants.imgSize}px;" />`,
                 name: ingredient.name
             });
 
@@ -521,7 +521,7 @@ function fillRecipes() {
         var donut = constants.donuts[i];
         if (!player.donuts[i]) {
             var inProgressRecipeInfo = inProgressRecipeTemplate({
-                img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+                img: `<img src="img/${donut.imagePath}" style="max-height: ${constants.imgSize}px; max-width: ${constants.imgSize}px;" />`,
                 flavor: donut.flavor,
                 ingredients: formatIngredientArrayAsHtml(donut.ingredients)
             });
@@ -530,7 +530,7 @@ function fillRecipes() {
         }
         else {
             var completedRecipeInfo = completedRecipeTemplate({
-                img: `<img src="img/${donut.imagePath}" style="max-height: 100px; max-width: 100px;" />`,
+                img: `<img src="img/${donut.imagePath}" style="max-height: ${constants.imgSize}px; max-width: ${constants.imgSize}px;" />`,
                 flavor: donut.flavor
             });
 

@@ -83,21 +83,21 @@ function Player() {
 	this.customerReconsider = 1;  // # times customer "rerolls" on unavailable donuts
 
 	// Other
-	this.name = "Hippo";
+	this.name = "Shooby's Donut Shop";
 	this.feedTotalTime = 4000;  // Time for feed to run
 	this.maxCustomerFeedDelay = 500;
 }
 
-/** Donut shop leaderboard. */
-var salesChart = [
-	["Dooby Donuts", 20000],
-	["Ypsilanti Dairy", 14000],
-	["Crunchy Creme", 8000],
-	["Moo Moo Pâtisserie", 1000],
-	["Duncan's Donuts", 500],
-	["Bob's Bakery", 200],
-	["Ratch Donuts", 50],
-	["Ohio's Best Donuts", 10]
+/** Other donut shops and their revenues. */
+var shops = [
+	["Dooby Donuts", 1337],
+	["Ypsilanti Dairy", 900],
+	["Crunchy Creme", 740],
+	["Moo Moo Pâtisserie", 566.60],
+	["Duncan's Donuts", 499],
+	["Bob's Bakery", 224],
+	["Ratch Donuts", 42.42],
+	["Ohio's Best Donuts", 4.44]
 ];
 
 /** Constants. */
@@ -148,7 +148,7 @@ var constants = {
 	imgSize: 64,
     savedPlayer: "playerSave",
     saveInterval: 3000,  // In milliseconds
-    version: "0.9.4"
+    version: "0.9.5"
 };
 
 /** Debug settings. */

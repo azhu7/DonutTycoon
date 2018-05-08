@@ -11,7 +11,8 @@ function createNewPlayer() {
     logger.info("createNewPlayer(): Creating new player.");
     player = new Player();
     if (debug.askPlayerName) {
-        player.name = prompt("Hello! What is your name?", "");
+        var name = prompt("Hello! What is your name?", "");
+        player.name = `${name}'s Donut Shop`;
         logger.info(`createNewPlayer(): Player name is ${player.name}.`);
     }
     else {
@@ -85,6 +86,9 @@ function openTab(evt, tabName) {
  * @return {bool} True is invariants are held.
  */
 function checkInvariants() {
+    logger.info("checkInvariants(): Not implemented.");
+    return;
+
     logger.info("checkInvariants(): Checking invariants.");
     // Player donuts, ingredients same length as constants
     // Player num unlocked donuts less than max
@@ -106,8 +110,11 @@ $(function() {
     // Initialize player
     init();
 
-    $("#header").html(`${player.name}'s Donut Shop`);
+    $("#header").html(player.name);
     $("#versionNum").html(constants.version);
+
+    
+    refreshUpgradeTab();
 
     // Start at night
     startNight();

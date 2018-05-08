@@ -18,6 +18,7 @@ body {
 	width: 100%;
 }
 
+/** Eliminiate colors for links. */
 a, a:visited, a:hover, a:active {
 	text-decoration: none;
   	color: inherit;
@@ -35,106 +36,39 @@ a, a:visited, a:hover, a:active {
 	margin-right: 0%;
 }
 
-#donutShopTab, #upgradesTab {
-	margin-left: 10%;
-	margin-right: 10%;
-	max-height: 850px;
+.row {
+	display: flex;
 }
 
-.upgradeColumn {
+.column {
 	margin-left: 0px;
 	margin-right: 0px;
 	font-size: 16px;
 	font-weight: bold;
 	overflow: auto;
-	flex: 25%;
 	min-height: 700px;
 }
 
-#ingredientsColumn {
-	background-color: #e0eee0;
-	text-align: center;
-}
-
-#unownedIngredients {
-	margin-left: 5%;
-	margin-right: 5%;
-	min-width: 90%;
-	text-align: center;
-}
-
-#ownedIngredients {
-	margin-left: 20%;
-	margin-right: 20%;
-	min-width: 60%;
-	text-align: center;
-}
-
-#recipesColumn {
-	background-color: #f0f8ff;
-	text-align: center;
-}
-
-#inProgressRecipes {
-	margin-left: 5%;
-	margin-right: 5%;
-	min-width: 90%;
-	text-align: left;
-}
-
-#completedRecipes {
-	margin-left: 20%;
-	margin-right: 20%;
-	min-width: 60%;
-	text-align: center;
-}
-
-.ingredientList {
-	padding-left: 20px;
-	font-size: 14px;
-}
-
-#upgradesColumn {
-	background-color: #fff0f5;
-	text-align: center;
-}
-
-#upgrades, #upgradeButtonTable {
-	margin-left: 5%;
-	margin-right: 5%;
-	min-width: 90%;
-	text-align: center;
-}
-
-#upgradeButtonTable {
-	border-collapse: collapse;
-}
+/** Begin Donut Shop Tab. */
 
 #infoColumn {
 	text-align: center;
 	height: 800px;
-	font-size: 18px;
-	font-weight: bold;
 	background-color: #add8e6;
-	overflow: auto;
-	flex: 60%;
+	flex: 75%;
 }
 
 #infoFeed, #advisorColumn {
-	margin-left: auto;
-	margin-right: auto;
 	padding: 0px 10px 0px 10px;
 	text-align: center;
 	height: 800px;
 	background-color: #d3d3d3;
-	overflow: auto;
-	flex: 20%;
+	flex: 25%;
 }
 
 #feedContent, #advisorContent {
 	text-align: left;
-	font-size: 16px;
-	overflow: auto;
+	font-weight: normal;
 }
 
 #advisorContent {
@@ -143,10 +77,6 @@ a, a:visited, a:hover, a:active {
 
 #advisorTableRow {
 	height: 25px;
-}
-
-.row {
-	display: flex;
 }
 
 #tablePane {
@@ -182,6 +112,123 @@ a, a:visited, a:hover, a:active {
 #startButton {
 	margin: 20px auto 0px auto;
 }
+
+/** End Donut Shop Tab */
+/** Begin Upgrade Tab */
+
+#ingredientsColumn {
+	background-color: #e0eee0;
+	text-align: center;
+	flex: 33%;
+}
+
+#unownedIngredients {
+	margin-left: 5%;
+	margin-right: 5%;
+	min-width: 90%;
+	text-align: center;
+}
+
+#ownedIngredients {
+	margin-left: 20%;
+	margin-right: 20%;
+	min-width: 60%;
+	text-align: center;
+}
+
+#recipesColumn {
+	background-color: #f0f8ff;
+	text-align: center;
+	flex: 33%;
+}
+
+#inProgressRecipes {
+	margin-left: 5%;
+	margin-right: 5%;
+	min-width: 90%;
+	text-align: left;
+}
+
+#completedRecipes {
+	margin-left: 20%;
+	margin-right: 20%;
+	min-width: 60%;
+	text-align: center;
+}
+
+.ingredientList {
+	padding-left: 20px;
+	font-size: 14px;
+}
+
+#upgradesColumn {
+	background-color: #fff0f5;
+	text-align: center;
+	flex: 33%;
+}
+
+#upgrades, #upgradeButtonTable {
+	margin-left: 5%;
+	margin-right: 5%;
+	min-width: 90%;
+	text-align: center;
+}
+
+#upgradeButtonTable {
+	border-collapse: collapse;
+}
+
+/** End Upgrade Tab */
+/** Begin Statistics Tab */
+
+#metricsColumn {
+	background-color: #fff0f5;
+	text-align: center;
+	flex: 60%;
+}
+
+#leaderboardColumn {
+	background-color: #f0f8ff;
+	text-align: center;
+	flex: 40%;
+}
+
+#leaderboardContent {
+	margin-left: 5%;
+	margin-right: 5%;
+	min-width: 90%;
+	text-align: left;
+	border-collapse: collapse;
+}
+
+#leaderboardContent td, #leaderboardContent th {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+#leaderboardContent tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+#leaderboardContent tr:hover {
+	background-color: #ddd;
+}
+
+#leaderboardContent th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+/** End Statistics Tab */
+/** Begin Achievements Tab */
+
+/** End Achievements Tab */
+/** Begin Settings Tab */
+
+/** End Settings Tab */
 
 #version {
 	clear: both;
@@ -289,5 +336,8 @@ a, a:visited, a:hover, a:active {
 
 /* Style the tab content */
 .tabcontent {
-    display: none;
+    margin-left: 10%;
+	margin-right: 10%;
+	max-height: 850px;
+	display: none;
 }

@@ -178,13 +178,16 @@ function buyUpgrade(upgradeId) {
     logger.info(`buyUpgrade(): Player bought upgrade ${upgradeId}.`);
 }
 
-/** Open upgrades tab. */
-function openUpgrades(event) {
-    saveDonutSelection();
-
+/** Refresh all upgrade tab sections. */
+function refreshUpgradeTab() {
     fillIngredients();
     fillRecipes();
     fillUpgrades();
+}
+
+/** Open upgrades tab. */
+function openUpgrades(event) {
+    saveDonutSelection();
 
     openTab(event, 'upgradesTab');
 }

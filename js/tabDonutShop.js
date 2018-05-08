@@ -254,6 +254,11 @@ async function simulateDay() {
     logger.info(`simlateDay(): Ended day with ${totalDonuts} donuts remaining.`);
 }
 
+/** Increment money for other donut shops. */
+function iterateOtherShops() {
+	logger.info("iterateOtherShops(): Not implemented.");
+}
+
 /** Switch to day view. */
 function startDay() {
 	// Make sure we can start the day
@@ -293,12 +298,14 @@ function startDay() {
 
     logger.info("startDay(): Done setting up day.");
     simulateDay();
+    iterateOtherShops();
 
     // Apply end of day effects.
     // Important because on load, we always start at night, so if player exits
     // before manually ending the day, we would like to start on the next night.
     player.day += 1;
     player.money += constants.upgrades[constants.upgradeId.Support].effect();
+    fillLeaderboard();  // Update leaderboard at the end of the day
     logger.info(`startDay(): Ending day. Day is now ${player.day}.`);
     logger.info(`startDay(): Applying passive income. Player now has $${player.money}.`);
 }
@@ -389,6 +396,7 @@ function customerBuy(donutId, numToBuy, customerMoneyPerDonut) {
 
 /** Open donut shop tab. */
 function openDonutShop(event) {
+	// Must update every time in case player purchased upgrades.
     refreshPlayerInfo();
     refreshDonutList();
     fillAdvisor();

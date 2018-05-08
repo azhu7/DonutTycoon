@@ -32,7 +32,7 @@
 			<!-- End Tabs -->
 			<!-- Begin Donut Shop -->
 			<div id="donutShopTab" class="tabcontent row">
-				<div id="infoColumn" class="boxed">
+				<div id="infoColumn" class="column boxed">
 					<h2 id="dayInfo"></h2>
 					<p>You have $<span id="playerMoney"></span></p>
 					<p id="message"></p>
@@ -56,11 +56,11 @@
 					<span><br/></span>
 					<div class="buttonLit" id="startButton"><h3 id="startButtonText" onclick="startDay();">Start Day</h3></div>
 				</div>
-				<div id="infoFeed" class="boxed">
+				<div id="infoFeed" class="column boxed">
 					<h2 id="feedHeader">Customer Feed</h2>
 					<p id="feedContent"></p>
 				</div>
-				<div id="advisorColumn" class="boxed">
+				<div id="advisorColumn" class="column boxed">
 					<h2 id="advisorHeader">Donut Advisor</h2>
 					<table id="advisorContent">
 						<tbody>
@@ -104,7 +104,7 @@
 			<!-- End Donut Shop -->
 			<!-- Begin Upgrades -->
 			<div id="upgradesTab" class="tabcontent row">
-				<div id="ingredientsColumn" class="upgradeColumn boxed">
+				<div id="ingredientsColumn" class="column boxed">
 					<h2 id="ingredientsHeader">Ingredients</h2>
 					<div id="ingredientsContent">
 						<h3 class="underlined">Unowned</h3>
@@ -121,7 +121,7 @@
 						</table>
 					</div>
 				</div>
-				<div id="recipesColumn" class="upgradeColumn boxed">
+				<div id="recipesColumn" class="column boxed">
 					<h2 id="recipesHeader">Recipes</h2>
 					<div id="recipesContent">
 						<h3 class="underlined">In-progress</h3>
@@ -138,7 +138,7 @@
 						</table>
 					</div>
 				</div>
-				<div id="upgradesColumn" class="upgradeColumn boxed">
+				<div id="upgradesColumn" class="column boxed">
 					<h2 id="upgradesHeader">Upgrades</h2>
 					<div id="upgradesContent">
 						<table id="upgrades">
@@ -245,8 +245,44 @@
 			<!-- End Upgrades -->
 			<!-- Begin Statistics -->
 			<div id="statisticsTab" class="tabcontent row">
-				Statistics Tab
+				<div id="metricsColumn" class="column boxed">
+					<h2 id="metricsHeader">Metrics</h2>
+					<table id="metricsContent">
+						<tbody>
+							<!-- Will fill this with rows of metricEntryTemplate -->
+						</tbody>
+					</table>
+				</div>
+				<div id="leaderboardColumn" class="column boxed">
+					<h2 id="leaderboardHeader">Leaderboard</h2>
+					<table id="leaderboardContent">
+						<tbody>
+							<tr>
+								<th>Rank</th>
+								<th>Donut Shop</th>
+								<th>Revenue</th>
+							</tr>
+							<!-- Will fill this with rows of leaderboardEntryTemplate -->
+						</tbody>
+					</table>
+				</div>
 			</div>
+
+			<script type="text/template" id="metricsEntryTemplate">
+				<tr id="metricsTableRow">
+					<td class="leftAligned"><%= description %></td>
+					<td class="spacer"></td>
+					<td class="rightAligned"><%= amount %></td>
+				</tr>
+			</script>
+
+			<script type="text/template" id="leaderboardEntryTemplate">
+				<tr>
+					<td><%= rank %></td>
+					<td><%= name %></td>
+					<td class="rightAligned">$<%= revenue %></td>
+				</tr>
+			</script>
 			<!-- End Statistics -->
 			<!-- Begin Profile -->
 			<div id="profileTab" class="tabcontent row">

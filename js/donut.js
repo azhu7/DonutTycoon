@@ -1,3 +1,8 @@
+/**
+ * Author: Alexander Zhu
+ * Date Created: May 3, 2018
+ * Description: Donut object for Donut Tycoon.
+ */
 
 /**
  * [Donut description]

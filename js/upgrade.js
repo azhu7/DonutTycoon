@@ -1,14 +1,8 @@
 /**
- * UpgradeTier object.
- * @param {string} name   Tier name.
- * @param {number} cost   Tier cost.
- * @param {number} effect Tier effect.
+ * Author: Alexander Zhu
+ * Date Created: May 6, 2018
+ * Description: Upgrade object for Donut Tycoon.
  */
-function UpgradeTier(name, cost, effect) {
-	this.name = name;
-	this.cost = cost;
-	this.effect = effect;
-}
 
 /**
  * Upgrade object.
@@ -63,4 +57,16 @@ Upgrade.prototype.upgrade = function() {
 
 	this.current++;
 	return this.current === this.tiers.length;
+}
+
+/**
+ * UpgradeTier object.
+ * @param {string} name   Tier name.
+ * @param {number} cost   Tier cost.
+ * @param {number} effect Tier effect.
+ */
+function UpgradeTier(name, cost, effect) {
+	this.name = name;
+	this.cost = cost;
+	this.effect = effect;
 }

@@ -30,17 +30,22 @@ function fixLoadedObjects() {
 
 /** Load player state from local storage. */
 function load() {
+	logger.info("load(): Loading player.");
 	$.extend(true, player, JSON.parse(localStorage.getItem(constants.savedPlayer)));
 	fixLoadedObjects();
+	logger.info("load(): Loaded player.");
+	logger.info({player: player});
 }
 
 /** Wipe player state from local storage. */
 function wipe() {
     var confirmation = confirm("Are you sure you want to permanently erase your savefile?");
     if (confirmation === true) {
+    	logger.info("wipe(): Wiping player save.");
         createNewPlayer();
         localStorage.setItem(constants.savedPlayer, JSON.stringify(player));
         startNight();
         $("#defaultOpen").click();
+        logger.info("wipe(): Done wiping. Started new game.");
     }
 }

@@ -1,3 +1,9 @@
+/**
+ * Author: Alexander Zhu
+ * Date Created: March 7, 2018
+ * Description: Instructions stylesheet for Donut Tycoon.
+ */
+
 body {
 	background: url(../img/instruction_background.png) no-repeat center center fixed;
 	-webkit-background-size: cover;

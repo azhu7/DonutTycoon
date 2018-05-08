@@ -1,32 +1,8 @@
-(function(console) {
-    /**
-     * Download the data as a json file.
-     * @param  {object} data     Object to serialize and download.
-     * @param  {string} filename Name of downloaded file.
-     */
-    console.save = function(data, filename) {
-        if (!data) {
-            console.error('Console.save: No data');
-            return;
-        }
-
-        if (!filename) filename = 'console.json';
-
-        if (typeof data === "object"){
-            data = JSON.stringify(data, setToJSON, 4);
-        }
-
-        var blob = new Blob([data], {type: 'text/json'});
-        var e = document.createEvent('MouseEvents');
-        var a = document.createElement('a');
-
-        a.download = filename;
-        a.href = window.URL.createObjectURL(blob);
-        a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':');
-        e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-        a.dispatchEvent(e);
-    }
-})(console);
+/**
+ * Author: Alexander Zhu
+ * Date Created: May 6, 2018
+ * Description: Logger object for Donut Tycoon.
+ */
 
 /**
  * Logger object.
@@ -71,10 +47,10 @@ function Logger(saveLogs, logFilename, getMetadata=null) {
     }
 }
 
-/** Download logs (for debugging). */
-Logger.prototype.download = function() {
-    extraInfo = [
-        "--- Additional debug information ---",
-        {player: player}];
+/**
+ * Download logs (for debugging).
+ * @param  {string[]} extraInfo Array of extra information to download.
+ */
+Logger.prototype.download = function(extraInfo) {
     console.save(this.logs.concat(extraInfo), this.logFilename);
 }

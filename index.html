@@ -13,17 +13,21 @@
 		<div>
 			<div>
 				<div class="buttonLit"><a href="instructions.html" target="_newtab">Instructions</a></div>
-				<div class="buttonLit" onclick="logger.download()">Save Logs</div>
+				<div class="buttonLit" onclick="downloadLogs()">Save Logs</div>
 			</div>
 		</div>
 		<div><a href="https://github.com/azhu7/DonutTycoon"></a></div>
 		<h1 id="header" onclick="egg();"></h1>
 
+		<!-- Begin Main Container -->
 		<div id="mainContainer">
 			<!-- Begin Tabs -->
 			<div class="tab boxed">
 				<button class="tablinks active" onclick="openDonutShop(event)" id="defaultOpen">Donut Shop</button>
 				<button class="tablinks" onclick="openUpgrades(event);">Upgrades</button>
+				<button class="tablinks" onclick="openStatistics(event);">Statistics</button>
+				<button class="tablinks" onclick="openProfile(event);">Profile</button>
+				<button class="tablinks" onclick="openSettings(event);">Settings</button>
 			</div>
 			<!-- End Tabs -->
 			<!-- Begin Donut Shop -->
@@ -145,7 +149,6 @@
 					</div>
 				</div>
 			</div>
-
 			<!-- Begin Ingredient Templates -->
 			<script type="text/template" id="unownedIngredientTemplate">
 				<tr>
@@ -240,6 +243,21 @@
 			</script>
 			<!-- End Upgrades Templates -->
 			<!-- End Upgrades -->
+			<!-- Begin Statistics -->
+			<div id="statisticsTab" class="tabcontent row">
+				Statistics Tab
+			</div>
+			<!-- End Statistics -->
+			<!-- Begin Profile -->
+			<div id="profileTab" class="tabcontent row">
+				Profile Tab
+			</div>
+			<!-- End Profile -->
+			<!-- Begin Settings -->
+			<div id="settingsTab" class="tabcontent row">
+				Settings Tab
+			</div>
+			<!-- End Settings -->
 		</div>
 		<!-- End Main Container -->
 
@@ -249,12 +267,17 @@
 		<script src="lib/jquery.min.js"></script>
 
 		<script src="js/utility.js"></script>
-		<script src="js/debug.js"></script>
+		<script src="js/logger.js"></script>
 		<script src="js/ingredient.js"></script>
 		<script src="js/donut.js"></script>
 		<script src="js/upgrade.js"></script>
 		<script src="js/data.js"></script>
-		<script src="js/script.js"></script>
+		<script src="js/tabDonutShop.js"></script>
+		<script src="js/tabUpgrades.js"></script>
+		<script src="js/tabStatistics.js"></script>
+		<script src="js/tabProfile.js"></script>
+		<script src="js/tabSettings.js"></script>
 		<script src="js/storage.js"></script>
+		<script src="js/script.js"></script>
 	</body>
 </html>

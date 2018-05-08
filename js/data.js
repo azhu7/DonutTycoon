@@ -88,21 +88,13 @@ function Player() {
 	this.maxCustomerFeedDelay = 500;
 }
 
-/** Debug settings. */
-var debug = {
-	loadSaved: true,
-	autosave: true,
-	askPlayerName: false,
-	saveLogs: true,
-	logFilename: "logs.json"
-}
-
 /** Donut shop leaderboard. */
 var salesChart = [
 	["Dooby Donuts", 20000],
 	["Ypsilanti Dairy", 14000],
 	["Crunchy Creme", 8000],
 	["Moo Moo Pâtisserie", 1000],
+	["Duncan's Donuts", 500],
 	["Bob's Bakery", 200],
 	["Ratch Donuts", 50],
 	["Ohio's Best Donuts", 10]
@@ -158,3 +150,12 @@ var constants = {
     saveInterval: 3000,  // In milliseconds
     version: "0.9.4"
 };
+
+/** Debug settings. */
+var debug = {
+    loadSaved: true,
+    autosave: true,
+    askPlayerName: false,
+    saveLogs: true,
+    logFilename: "logs.json"
+}

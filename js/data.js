@@ -14,11 +14,11 @@ var GameState = Object.freeze({
 var ShopLocation = Object.freeze({
 	tiers: [
 		new UpgradeTier("None", 0, 0),
-		new UpgradeTier("Home", 0, 25), 
-		new UpgradeTier("Stand", 10, 50),
-		new UpgradeTier("Small Shop", 50, 100),
-		new UpgradeTier("Large Shop", 150, 200),
-		new UpgradeTier("Factory", 300, 400)],
+		new UpgradeTier("Home", 0, 15), 
+		new UpgradeTier("Stand", 50, 40),
+		new UpgradeTier("Small Shop", 125, 100),
+		new UpgradeTier("Large Shop", 250, 200),
+		new UpgradeTier("Factory", 500, 400)],
 	effectDescription: effect => {
 		return `(+${effect})`;
 	}

@@ -6,6 +6,8 @@
 
 /** Populate list of ingredients. */
 function fillIngredients() {
+    logger.info("fillIngredients(): Filling ingredients list.");
+
     var unownedIngredientTemplate = _.template($("#unownedIngredientTemplate").html());
     var ownedIngredientTemplate = _.template($("#ownedIngredientTemplate").html());
 
@@ -37,6 +39,8 @@ function fillIngredients() {
             $("#ownedIngredients > tbody").append(ownedIngredientInfo);
         }
     }
+
+    logger.info("fillIngredients(): Filled ingredients list.");
 }
 
 /**
@@ -58,6 +62,8 @@ function formatIngredientArrayAsHtml(array) {
 
 /** Populate list of recipes. */
 function fillRecipes() {
+    logger.info("fillRecipes(): Filling recipes list.");
+
     var inProgressRecipeTemplate = _.template($("#inProgressRecipeTemplate").html());
     var completedRecipeTemplate = _.template($("#completedRecipeTemplate").html());
 
@@ -85,6 +91,8 @@ function fillRecipes() {
             $("#completedRecipes > tbody").append(completedRecipeInfo);
         }
     }
+
+    logger.info("fillRecipes(): Filled recipes list.");
 }
 
 /**
@@ -93,16 +101,17 @@ function fillRecipes() {
  */
 function buyIngredient(ingredientId) {
     if (player.ingredients[ingredientId]) {
-        logger.error(`Ingredient ${ingredientId} already owned.`);
+        logger.error(`buyIngredient(): Ingredient ${ingredientId} already owned.`);
         return;
     }
 
     var ingredient = constants.ingredients[ingredientId];
     if (player.money < ingredient.cost) {
-        logger.error(`Cannot afford ingredient ${ingredientId}.`);
+        logger.error(`buyIngredient(): Cannot afford ingredient ${ingredientId}.`);
         return;
     }
 
+    logger.info(`buyIngredient(): Player buying ingredient ${ingredientId}.`);
     player.money -= ingredient.cost;
     player.ingredients[ingredientId] = 1;
 
@@ -119,17 +128,19 @@ function buyIngredient(ingredientId) {
             player.donuts[i] = 1;
             player.unlockedDonuts.add(i);
             player.lockedDonuts.delete(i);
-            logger.info(`Unlocked donut flavor: ${constants.donuts[i].flavor}`);
+            logger.info(`buyIngredient(): Unlocked donut flavor: ${constants.donuts[i].flavor}`);
         }
     }
 
     // Update ingredients and recipe list
     fillIngredients();
     fillRecipes();
+    logger.info(`buyIngredient(): Player bought ingredient ${ingredientId}`);
 }
 
 /** Populate list of upgrades. */
 function fillUpgrades() {
+    logger.info("fillUpgrades(): Filling upgrades list.");
     var upgradeTemplate = _.template($("#upgradeTemplate").html());
 
     $("#upgrades > tbody").empty();  // Clear old entries
@@ -149,6 +160,8 @@ function fillUpgrades() {
         var canAfford = player.money >= upgrade.cost();
         $(`#upgrade${i}`)[0].className = "upgradeButton " + (canAfford ? "buttonLit" : "button");
     }
+
+    logger.info("fillUpgrades(): Filled upgrades list.");
 }
 
 /** Handle purchasing upgrade. Assume can afford ingredient. */
@@ -158,9 +171,11 @@ function buyUpgrade(upgradeId) {
         return;
     }
 
+    logger.info(`buyUpgrade(): Player buying upgrade ${upgradeId}.`);
     player.money -= constants.upgrades[upgradeId].cost();
     constants.upgrades[upgradeId].upgrade();
     fillUpgrades();
+    logger.info(`buyUpgrade(): Player bought upgrade ${upgradeId}.`);
 }
 
 /** Open upgrades tab. */

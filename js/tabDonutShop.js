@@ -6,6 +6,7 @@
 
 /** Format night player info. */
 function setNightPlayerInfo() {
+	logger.info("setNightPlayerInfo(): Setting night player info.");
     $("#dayInfo").html(`Night ${player.day}`);
     $("#playerMoney").html(displayMoney(player.money));
     $("#message").html("Select donuts to make for tomorrow!");
@@ -13,6 +14,7 @@ function setNightPlayerInfo() {
 
 /** Format day player info. */
 function setDayPlayerInfo() {
+	logger.info("setDayPlayerInfo(): Setting day player info.");
     $("#dayInfo").html(`Day ${player.day}`);
     $("#playerMoney").html(`${displayMoney(player.money)}<br/>Profit: $${displayMoney(player.dayProfit)}`);
     $("#message").html("Serve the customers!");
@@ -34,12 +36,13 @@ function refreshDonutList() {
         fillDonutSell();
     }
     else {
-        fillDonutSelection();
+        fillDonutCreation();
     }
 }
 
 /** Populate list of donuts to select from. */
-function fillDonutSelection() {
+function fillDonutCreation() {
+	logger.info("fillDonutCreation(): Filling donut creation list.");
     var donutCreateTemplate = _.template($("#donutCreateTemplate").html());
 
     // Populate donut menu
@@ -77,10 +80,12 @@ function fillDonutSelection() {
 
     $("#donutSelling").hide();
     $("#donutSelection").show();
+    logger.info("fillDonutCreation(): Filled donut creation list.");
 }
 
 /** Save player's selected donut quantities/prices. */
 function saveDonutSelection() {
+	logger.info("saveDonutSelection(): Saving donut selection.");
     // Get user's inputs from #donutSelection
     player.sellPrices = [];
     player.quantities = [];
@@ -106,10 +111,12 @@ function saveDonutSelection() {
     }
 
     $.extend(true, player.selectedQuantities, player.quantities);
+    logger.info("saveDonutSelection(): Saved donut selection.");
 }
 
 /** Populate list of donuts sold. */
 function fillDonutSell() {
+	logger.info("fillDonutSell(): Filling donut sell list.");
     var donutSellTemplate = _.template($("#donutSellTemplate").html());
 
     // Populate donut menu
@@ -133,10 +140,12 @@ function fillDonutSell() {
 
     $("#donutSelection").hide();
     $("#donutSelling").show();
+    logger.info("fillDonutSell(): Filled donut sell list.");
 }
 
 /** Populate advisor information. */
 function fillAdvisor() {
+	logger.info("fillDonutAdvisor(): Filling donut advisor.");
     if (player.gameState !== GameState.Night) {
         return;  // Only fill at night
     }
@@ -152,6 +161,8 @@ function fillAdvisor() {
 
         $("#advisorContent > tbody").append(advisorInfo);
     });
+
+    logger.info("fillDonutAdvisor(): Filled donut advisor.");
 }
 
 /**
@@ -203,8 +214,13 @@ async function simulateDay() {
     // Hide button until day is over
     $("#startButton").hide();
     var numCustomers = Math.ceil(constants.upgrades[constants.upgradeId.Shop].effect() * constants.upgrades[constants.upgradeId.Popularity].effect());
-    logger.info(`simlateDay() - # Customers: ${numCustomers}.`);
+    logger.info(`simlateDay(): # Customers: ${numCustomers}.`);
+
     var customerFeedDelayTime = Math.min(player.feedTotalTime / numCustomers, player.maxCustomerFeedDelay);
+    
+    // Track this to end day early when out of donuts
+    var totalDonuts = player.quantities.reduce((accumulator, currentVal) => accumulator + currentVal);
+    logger.info(`simlateDay(): Starting with ${totalDonuts} donuts.`);
 
     for (var i = 0; i < numCustomers; ++i) {
         var name = constants.names[Math.floor(Math.random() * constants.names.length)];
@@ -216,6 +232,7 @@ async function simulateDay() {
         var numBought = customerBuy(donutId, numToBuy, customerMoneyPerDonut);
         if (numBought) {
             var totalSpent = numBought * player.sellPrices[donutId];
+            totalDonuts -= numBought;
             $("#feedContent").append(`${name} bought ${numBought} ${donutName} Donut(s) for $${displayMoney(totalSpent)}.<br/>`);
         }
         else {
@@ -223,25 +240,34 @@ async function simulateDay() {
         }
 
         $("#infoFeed").scrollTop($("#infoFeed")[0].scrollHeight);
+
+        if (!totalDonuts) {
+        	// No more donuts. End the day early!
+        	$("#feedContent").append("Donuts sold out! Closing shop early.");
+        	break;
+        }
+
         await sleep(customerFeedDelayTime);
     }
-
+    
     $("#startButton").show();
+    logger.info(`simlateDay(): Ended day with ${totalDonuts} donuts remaining.`);
 }
 
 /** Switch to day view. */
 function startDay() {
-    // Make sure we can start the day
+	// Make sure we can start the day
     var moneyRemaining = parseFloat($("#lowerInfo").find("tr").eq(1).find("td").eq(0).text().split("$")[1]);
     if (isNaN(moneyRemaining)) {
-        logger.error("Money remaining is NaN.");
+        logger.error("startDay(): Money remaining is NaN.");
         return;
     }
     else if (moneyRemaining < 0) {
-        logger.error("Not enough money.")
+        logger.error("startDay(): Not enough money.")
         return;
     }
 
+    logger.info(`startDay(): Starting day ${player.day}.`);
     player.gameState = GameState.Day;
 
     // Apply cost to make donuts
@@ -264,6 +290,8 @@ function startDay() {
     // Show stream
     $("#feedContent").empty();
     $("#infoFeed").css({"display": "inline-block"});
+
+    logger.info("startDay(): Done setting up day.");
     simulateDay();
 
     // Apply end of day effects.
@@ -271,18 +299,18 @@ function startDay() {
     // before manually ending the day, we would like to start on the next night.
     player.day += 1;
     player.money += constants.upgrades[constants.upgradeId.Support].effect();
-    logger.info(`Ending day. Day is now ${player.day}.`);
-    logger.info(`Applying passive income. Player now has $${player.money}.`);
+    logger.info(`startDay(): Ending day. Day is now ${player.day}.`);
+    logger.info(`startDay(): Applying passive income. Player now has $${player.money}.`);
 }
 
 /** Switch to night view. */
 function startNight() {
-    logger.info(`Starting night ${player.day}.`);
+    logger.info(`startNight(): Starting night ${player.day}.`);
     player.gameState = GameState.Night;
 
     // Populate UI
     setNightPlayerInfo();
-    fillDonutSelection();
+    fillDonutCreation();
     fillAdvisor();
     refreshTotalCost();
 
@@ -293,6 +321,7 @@ function startNight() {
     // Update button
     $("#startButton").attr("onclick", "startDay()");
     $("#startButton").text("Start Day");
+    logger.info(`startNight(): Done setting up night.`);
 }
 
 /** Update total cost when user is selecting donut amounts. */

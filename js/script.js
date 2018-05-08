@@ -21,14 +21,14 @@ function createNewPlayer() {
 }
 
 /** Initialize player. */
-function init() {
+function initPlayer() {
     if (debug.loadSaved) {
         if (localStorage.getItem(constants.savedPlayer)) {
             logger.info("init(): Found saved file.");
             load();
         }
         else {
-            logger.info("init(): Did not find saved file.")
+            logger.info("init(): Did not find saved file.");
             createNewPlayer();
         }
     }
@@ -38,19 +38,28 @@ function init() {
     }
 }
 
+/** Synchronize constants.upgrades levels with player's levels. */
+function syncUpgradeLevels() {
+    for (var i = 0; i < constants.upgrades.length; i++) {
+        constants.upgrades[i].current = player.upgradeLevels[i];
+    }
+}
+
 /** Easter egg. */
 function egg() {
-    if (typeof egg.clicks === 'undefined') {
-        egg.clicks = 0;
+    if (typeof this.clicks === 'undefined') {
+        this.clicks = 0;
     }
 
-    egg.clicks++;
-    if (egg.clicks === 3) {
-        $("#header").text("Alex and Benicia's Donut Shop");
-    }
-    else if (egg.clicks === 6) {
-        $("#header").text(`${player.name}'s Donut Shop`);
-        egg.clicks = 0;
+    this.clicks++;
+    if (this.clicks === 3) {
+        if (player.name !== constants.eggName) {
+            player.name = constants.eggName;
+            $("#header").text(player.name);
+            fillLeaderboard();  // Name changed
+        }
+
+        this.clicks = 0;
     }
 }
 
@@ -96,6 +105,7 @@ function checkInvariants() {
     return true;
 }
 
+/** Download logs and player info. */
 function downloadLogs() {
     extraInfo = [
         "--- Additional debug information ---",
@@ -103,16 +113,14 @@ function downloadLogs() {
     logger.download(extraInfo);
 }
 
-/** Runs on startup. */
-$(function() {
-    logger.info("main(): Running start up code.");
-
+/** Initialize the application. */
+function initApplication() {
     // Initialize player
-    init();
+    initPlayer();
+    syncUpgradeLevels();
 
     $("#header").html(player.name);
     $("#versionNum").html(constants.version);
-
 
     refreshUpgradeTab();
 
@@ -127,11 +135,17 @@ $(function() {
     }
 
     if (debug.autosave) {
-        setInterval(save, constants.saveInterval);
+        logger.info(`initApplication(): Autosave every ${constants.saveInterval} milliseconds.`);
+        player.saveIntervalId = setInterval(save, constants.saveInterval);
     }
     else {
-        logger.warn("Autosave is turned off for development purposes.");
+        logger.warn("initApplication(): Autosave is turned off for development purposes.");
     }
+}
 
+/** Runs on startup. */
+$(function() {
+    logger.info("main(): Running start up code.");
+    initApplication();
     logger.info("main(): Finished start up code.");
 });

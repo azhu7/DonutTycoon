@@ -63,7 +63,7 @@ function Player() {
 	this.donuts = new Array(constants.donuts.length).fill(0);  // Track all donuts by index
 	this.unlockedDonuts = new Set();  // Unlocked donut ids
 	this.lockedDonuts = new Set([...Array(constants.donuts.length).keys()]);  // Locked donut ids
-	this.sellPrices = new Array();  // Remember selected
+	this.sellPrices = [];  // Remember selected
 	this.quantities = new Array(constants.donuts.length).fill(0);  // Track current quantities
 	this.selectedQuantities = new Array(constants.donuts.length).fill(0);  // Remember selected
 
@@ -86,6 +86,7 @@ function Player() {
 	this.name = "Shooby's Donut Shop";
 	this.feedTotalTime = 4000;  // Time for feed to run
 	this.maxCustomerFeedDelay = 500;
+	this.saveIntervalId = null;  // Save this id to cancel when wiping player
 }
 
 /** Other donut shops and their revenues. */
@@ -148,6 +149,7 @@ var constants = {
 	imgSize: 64,
     savedPlayer: "playerSave",
     saveInterval: 3000,  // In milliseconds
+    eggName: "Alex and Benicia's Donut Shop",
     version: "0.9.5"
 };
 
@@ -155,7 +157,7 @@ var constants = {
 var debug = {
     loadSaved: true,
     autosave: true,
-    askPlayerName: false,
+    askPlayerName: true,
     saveLogs: true,
     logFilename: "logs.json"
-}
+};

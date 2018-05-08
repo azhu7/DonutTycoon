@@ -6,7 +6,6 @@
 
 /** Save player state to local storage. */
 function save() {
-	logger.log("Saving");
 	// Save upgrade levels
 	for (var i = 0; i < constants.upgrades.length; i++) {
 		player.upgradeLevels[i] = constants.upgrades[i].current;
@@ -22,11 +21,6 @@ function save() {
 function fixLoadedObjects() {
 	player.unlockedDonuts = new Set(player.unlockedDonuts);
 	player.lockedDonuts = new Set(player.lockedDonuts);
-
-	// Synchronize constants.upgrades levels with loaded levels
-	for (var i = 0; i < constants.upgrades.length; i++) {
-		constants.upgrades[i].current = player.upgradeLevels[i];
-	}
 }
 
 /** Load player state from local storage. */
@@ -43,11 +37,13 @@ function wipe() {
     var confirmation = confirm("Are you sure you want to permanently erase your savefile?");
     if (confirmation === true) {
     	logger.info("wipe(): Wiping player save.");
-    	resetUpgrades();
-        createNewPlayer();
-        localStorage.setItem(constants.savedPlayer, JSON.stringify(player));
-        startNight();
-        $("#defaultOpen").click();
+    	if (debug.autosave) {
+    		// Make sure we don't save between clearing storage and initializing player
+    		clearInterval(player.saveIntervalId);
+    	}
+
+    	localStorage.removeItem(constants.savedPlayer);
+        initApplication();
         logger.info("wipe(): Done wiping. Started new game.");
     }
 }

@@ -268,7 +268,7 @@ function startDay() {
         return;
     }
     else if (moneyRemaining < 0) {
-        logger.error("startDay(): Not enough money.")
+        logger.error("startDay(): Not enough money.");
         return;
     }
 
@@ -363,7 +363,7 @@ function refreshTotalCost() {
     }
 
     // Update lower info color and button type
-    $("#lowerInfo").find("tr").eq(0).find("td").eq(0).css({"color": fontColor})
+    $("#lowerInfo").find("tr").eq(0).find("td").eq(0).css({"color": fontColor});
     $("#startButton")[0].className = buttonClass;
 }
 
@@ -385,7 +385,7 @@ function customerBuy(donutId, numToBuy, customerMoneyPerDonut) {
     }
 
     // Complete purchase
-    numToBuy = Math.min(player.quantities[donutId], numToBuy)
+    numToBuy = Math.min(player.quantities[donutId], numToBuy);
     player.money += numToBuy * donutPrice;
     player.dayProfit += numToBuy * donutPrice;
     player.quantities[donutId] -= numToBuy;

@@ -51,7 +51,7 @@ function fillIngredients() {
  * @return {string}             Html list syntax.
  */
 function formatIngredientArrayAsHtml(array) {
-    var html = ""
+    var html = "";
     array.forEach(function(item) {
         var className = player.ingredients[item] ? "ownedIngredient" : "unownedIngredient";
         html += `<li class="${className}">${constants.ingredients[item].name}</li>`;
@@ -122,8 +122,8 @@ function buyIngredient(ingredientId) {
         }
 
         // Unlock donut if player now owns every ingredient
-        if (constants.donuts[i].ingredients.every(ingredient => {
-            return player.ingredients[ingredient];
+        if (constants.donuts[i].ingredients.every(ingredientId => {
+            return player.ingredients[ingredientId];
         })) {
             player.donuts[i] = 1;
             player.unlockedDonuts.add(i);

@@ -28,12 +28,15 @@ function fillLeaderboard() {
 		// Track player's current money on leaderboard
 		this.curPlayerMoney = player.money;
 	}
+	if (typeof this.curPlayerName === "undefined") {
+		this.curPlayerName = player.name;
+	}
 
 	logger.info("fillLeaderboard(): Filling leaderboard.");
 	var leaderboardEntryTemplate = _.template($("#leaderboardEntryTemplate").html());
 
 	// Leaderboard up-to-date.
-	if (this.curDay == player.day && this.curPlayerMoney == player.money) {
+	if (this.curDay === player.day && this.curPlayerMoney === player.money && this.curPlayerName === player.name) {
 		logger.info("fillLeaderboard(): Leaderboard up-to-date.");
 		return;
 	}
@@ -42,6 +45,7 @@ function fillLeaderboard() {
 	logger.info("fillLeaderboard(): Leaderboard out-of-date. Refreshing.");
 	this.curDay = player.day;
 	this.curPlayerMoney = player.money;
+	this.curPlayerName = player.name;
 	var leaderboard = shops.concat([[player.name, player.money]]);
 	leaderboard.sort(compareDonutShop);
 	

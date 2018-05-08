@@ -6,6 +6,7 @@
 
 /** Save player state to local storage. */
 function save() {
+	logger.log("Saving");
 	// Save upgrade levels
 	for (var i = 0; i < constants.upgrades.length; i++) {
 		player.upgradeLevels[i] = constants.upgrades[i].current;
@@ -42,10 +43,21 @@ function wipe() {
     var confirmation = confirm("Are you sure you want to permanently erase your savefile?");
     if (confirmation === true) {
     	logger.info("wipe(): Wiping player save.");
+    	resetUpgrades();
         createNewPlayer();
         localStorage.setItem(constants.savedPlayer, JSON.stringify(player));
         startNight();
         $("#defaultOpen").click();
         logger.info("wipe(): Done wiping. Started new game.");
     }
+}
+
+/**
+ * Reset all upgrades. Used when wiping player data. Must do this because
+ * upgrades are stored in constants...
+ */
+function resetUpgrades() {
+	constants.upgrades.forEach(upgrade => {
+		upgrade.current = 0;
+	});
 }

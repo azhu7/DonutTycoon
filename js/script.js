@@ -87,7 +87,7 @@ function openTab(evt, tabName) {
  */
 function checkInvariants() {
     logger.info("checkInvariants(): Not implemented.");
-    return;
+    return true;
 
     logger.info("checkInvariants(): Checking invariants.");
     // Player donuts, ingredients same length as constants
@@ -113,7 +113,7 @@ $(function() {
     $("#header").html(player.name);
     $("#versionNum").html(constants.version);
 
-    
+
     refreshUpgradeTab();
 
     // Start at night

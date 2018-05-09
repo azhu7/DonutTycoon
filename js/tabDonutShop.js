@@ -58,7 +58,8 @@ function fillDonutCreation() {
             flavor: donut.flavor,
             cost: displayMoney(donut.cost),
             createId: `create${i}`,
-            sellForId: `sellFor${i}`
+            sellForId: `sellFor${i}`,
+            id: i
         });
 
         $("#donutSelection > tbody").append(donutInfo);
@@ -83,35 +84,51 @@ function fillDonutCreation() {
     logger.info("fillDonutCreation(): Filled donut creation list.");
 }
 
-/** Save player's selected donut quantities/prices. */
-function saveDonutSelection() {
-	logger.info("saveDonutSelection(): Saving donut selection.");
-    // Get user's inputs from #donutSelection
-    player.sellPrices = [];
-    player.quantities = [];
-    for (var i = 0; i < constants.donuts.length; i++) {
-        if (!player.donuts[i]) {
-            player.sellPrices.push(constants.donuts[i].cost);
-            player.quantities.push(0);
-        }
-        else {
-            var sellPrice = parseFloat($(`#sellFor${i}`).val());
-            if (isNaN(sellPrice)) {
-                logger.error(`Sell price for donut ${i} is NaN.`);
-            }
+function updateQuantity(id) {
+	player.selectedQuantities[id] = parseInt($(`#create${id}`).val());
+	logger.info(`updateQuantity(): donut ${id} quantity is now ${player.selectedQuantities[id]}.`);
+}
 
-            var quantity = parseInt($(`#create${i}`).val());
-            if (isNaN(quantity)) {
-                logger.error(`Quantity for donut ${i} is NaN.`);                
-            }
+function updateSellPrice(id) {
+	player.sellPrices[id] = parseFloat($(`#sellFor${id}`).val()).toFixed(2);
+	logger.info(`updateSellPrice(): donut ${id} price is now $${player.sellPrices[id]}.`);
+}
 
-            player.sellPrices.push(sellPrice);
-            player.quantities.push(quantity);
-        }
+/** Update total cost when user is selecting donut amounts. */
+function refreshTotalCost() {
+    if (player.gameState !== GameState.Night) {
+        return;  // Only refresh at night
     }
 
-    $.extend(true, player.selectedQuantities, player.quantities);
-    logger.info("saveDonutSelection(): Saved donut selection.");
+    var totalCost = 0;
+    for (var i = 0; i < player.unlockedDonuts.size; ++i) {
+        var quantity = parseInt($(`#create${i}`).val());
+        if (isNaN(quantity)) {
+            continue;
+        }
+        
+        totalCost += constants.donuts[i].cost * quantity;
+    }
+
+    var costText = `Total cost: $${displayMoney(totalCost)}`;
+    var moneyRemainingText = `Money remaining: $${displayMoney(player.money - totalCost)}`;
+    $("#lowerInfo > tbody").empty();
+    $("#lowerInfo > tbody").append(`<tr><td>${costText}</td></tr><tr><td>${moneyRemainingText}</td></tr>`);
+    var fontColor = "green";
+    var buttonClass = "buttonLit";
+    if (totalCost > player.money) {
+    	// Can't start if can't afford
+        fontColor = "red";
+        buttonClass = "button";
+    }
+    else if (!totalCost) {
+    	// Can't start without any donuts
+    	buttonClass = "button";
+    }
+
+    // Update lower info color and button type
+    $("#lowerInfo").find("tr").eq(0).find("td").eq(0).css({"color": fontColor});
+    $("#startButton")[0].className = buttonClass;
 }
 
 /** Populate list of donuts sold. */
@@ -132,7 +149,7 @@ function fillDonutSell() {
             flavor: donut.flavor,
             cost: displayMoney(player.sellPrices[i]),
             sellId: `sell${i}`,
-            quantity: player.quantities[i]
+            quantity: player.remainingQuantities[i]
         });
 
         $("#donutSelling > tbody").append(donutInfo);
@@ -186,7 +203,7 @@ function selectDonut() {
     // Select ID
     var donutId = roll();
     var rerolls = player.customerReconsider;
-    while (!player.quantities[donutId] && rerolls) {
+    while (!player.remainingQuantities[donutId] && rerolls) {
         donutId = roll();
         rerolls--;
     }
@@ -209,7 +226,7 @@ function genCustomerMoneyPerDonut(donutId) {
     return roundMoney(donut.cost * overallFactor);
 }
 
-/** Simulate one day of customers. */
+/** Simulate one day of customers and apply end-of-day effects. */
 async function simulateDay() {
     // Hide button until day is over
     $("#startButton").hide();
@@ -219,8 +236,9 @@ async function simulateDay() {
     var customerFeedDelayTime = Math.min(player.feedTotalTime / numCustomers, player.maxCustomerFeedDelay);
     
     // Track this to end day early when out of donuts
-    var totalDonuts = player.quantities.reduce((accumulator, currentVal) => accumulator + currentVal);
+    var totalDonuts = player.remainingQuantities.reduce((accumulator, currentVal) => accumulator + currentVal);
     logger.info(`simlateDay(): Starting with ${totalDonuts} donuts.`);
+    player.donutsMade += totalDonuts;  // Track stats
 
     for (var i = 0; i < numCustomers; ++i) {
         var name = constants.names[Math.floor(Math.random() * constants.names.length)];
@@ -233,6 +251,7 @@ async function simulateDay() {
         if (numBought) {
             var totalSpent = numBought * player.sellPrices[donutId];
             totalDonuts -= numBought;
+            player.donutsSold += numBought;  // Track stats
             $("#feedContent").append(`${name} bought ${numBought} ${donutName} Donut(s) for $${displayMoney(totalSpent)}.<br/>`);
         }
         else {
@@ -252,11 +271,23 @@ async function simulateDay() {
     
     $("#startButton").show();
     logger.info(`simlateDay(): Ended day with ${totalDonuts} donuts remaining.`);
+
+    // Apply end of day effects.
+    // Important because on load, we always start at night, so if player exits
+    // before manually ending the day, we would like to start on the next night.
+    // We do this at the end of this function as it must occur after the customers.
+    player.day += 1;
+    player.money += constants.upgrades[constants.upgradeId.Support].effect();
+    player.money = roundMoney(player.money);
+    fillLeaderboard();  // Update leaderboard at the end of the day
+    logger.info(`startDay(): Ending day. Day is now ${player.day}.`);
+    logger.info(`startDay(): Applying passive income. Player now has $${player.money}.`);
 }
 
 /** Increment money for other donut shops. */
 function iterateOtherShops() {
 	logger.info("iterateOtherShops(): Not implemented.");
+	fillLeaderboard();
 }
 
 /** Switch to day view. */
@@ -281,7 +312,7 @@ function startDay() {
 
     // Populate UI
     setDayPlayerInfo();
-    saveDonutSelection();
+    $.extend(true, player.remainingQuantities, player.selectedQuantities);
     fillDonutSell();
 
     // Update button. Hide until day is over.
@@ -297,17 +328,8 @@ function startDay() {
     $("#infoFeed").css({"display": "inline-block"});
 
     logger.info("startDay(): Done setting up day.");
-    simulateDay();
+    simulateDay();  // async
     iterateOtherShops();
-
-    // Apply end of day effects.
-    // Important because on load, we always start at night, so if player exits
-    // before manually ending the day, we would like to start on the next night.
-    player.day += 1;
-    player.money += constants.upgrades[constants.upgradeId.Support].effect();
-    fillLeaderboard();  // Update leaderboard at the end of the day
-    logger.info(`startDay(): Ending day. Day is now ${player.day}.`);
-    logger.info(`startDay(): Applying passive income. Player now has $${player.money}.`);
 }
 
 /** Switch to night view. */
@@ -331,42 +353,6 @@ function startNight() {
     logger.info(`startNight(): Done setting up night.`);
 }
 
-/** Update total cost when user is selecting donut amounts. */
-function refreshTotalCost() {
-    if (player.gameState !== GameState.Night) {
-        return;  // Only refresh at night
-    }
-
-    var totalCost = 0;
-    for (var i = 0; i < constants.donuts.length; ++i) {
-        if (!player.donuts[i]) {
-            continue;
-        }
-
-        var quantity = parseInt($(`#create${i}`).val());
-        if (isNaN(quantity)) {
-            continue;
-        }
-        
-        totalCost += constants.donuts[i].cost * quantity;
-    }
-
-    var costText = `Total cost: $${displayMoney(totalCost)}`;
-    var moneyRemainingText = `Money remaining: $${displayMoney(player.money - totalCost)}`;
-    $("#lowerInfo > tbody").empty();
-    $("#lowerInfo > tbody").append(`<tr><td>${costText}</td></tr><tr><td>${moneyRemainingText}</td></tr>`);
-    var fontColor = "green";
-    var buttonClass = "buttonLit";
-    if (totalCost > player.money) {
-        fontColor = "red";
-        buttonClass = "button";
-    }
-
-    // Update lower info color and button type
-    $("#lowerInfo").find("tr").eq(0).find("td").eq(0).css({"color": fontColor});
-    $("#startButton")[0].className = buttonClass;
-}
-
 /**
  * Handle customer purchases. Assume customer can afford.
  * @param  {number} donutId               Donut customer wants to buy.
@@ -375,7 +361,7 @@ function refreshTotalCost() {
  * @return {number}                       Number of donuts bought.
  */
 function customerBuy(donutId, numToBuy, customerMoneyPerDonut) {
-    if (!player.quantities[donutId]) {
+    if (!player.remainingQuantities[donutId]) {
         return 0;  // Donut out of stock
     }
 
@@ -385,22 +371,28 @@ function customerBuy(donutId, numToBuy, customerMoneyPerDonut) {
     }
 
     // Complete purchase
-    numToBuy = Math.min(player.quantities[donutId], numToBuy);
+    numToBuy = Math.min(player.remainingQuantities[donutId], numToBuy);
     player.money += numToBuy * donutPrice;
     player.dayProfit += numToBuy * donutPrice;
-    player.quantities[donutId] -= numToBuy;
-    $(`#sell${donutId}`).html(`Quantity: ${player.quantities[donutId]}`);
+    player.remainingQuantities[donutId] -= numToBuy;
+    $(`#sell${donutId}`).html(`Quantity: ${player.remainingQuantities[donutId]}`);
     $("#playerMoney").html(`${displayMoney(player.money)}. Profit: $${displayMoney(player.dayProfit)}.`);
     return numToBuy;
 }
 
 /** Open donut shop tab. */
 function openDonutShop(event) {
+	if (player.currentTab === constants.tabId.DonutShop) {
+		return;
+	}
+
+	player.currentTab = constants.tabId.DonutShop;
+
 	// Must update every time in case player purchased upgrades.
     refreshPlayerInfo();
     refreshDonutList();
     fillAdvisor();
     refreshTotalCost();
 
-    openTab(event, 'donutShopTab');
+    openTab(event, constants.tabId.DonutShop);
 }

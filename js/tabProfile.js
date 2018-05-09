@@ -6,5 +6,10 @@
 
 /** Open profile tab. */
 function openProfile(event) {
-	openTab(event, 'profileTab');
+	if (player.currentTab === constants.tabId.Profile) {
+        return;
+    }
+
+    player.currentTab = constants.tabId.Profile;
+	openTab(event, constants.tabId.Profile);
 }

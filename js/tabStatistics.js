@@ -5,8 +5,21 @@
  */
 
 /** Populate list of metrics. */
-function fillMetrics() {
+function fillStatistics() {
+	var statisticsEntryTemplate = _.template($("#statisticsEntryTemplate").html());
+	$("#statisticsContent > tbody").empty();
+	var statisticsEntries = [];
+	statisticsEntries.push(statisticsEntryTemplate({
+		description: "Total donuts made:",
+		amount: player.donutsMade
+	}));
 
+	statisticsEntries.push(statisticsEntryTemplate({
+		description: "Total donuts sold:",
+		amount: player.donutsSold
+	}));
+
+	statisticsEntries.forEach(entry => $("#statisticsContent > tbody").append(entry));
 }
 
 /** Sort donut shops by revenue, ascending. */
@@ -68,7 +81,13 @@ function fillLeaderboard() {
 
 /** Open statistics tab. */
 function openStatistics(event) {
+	if (player.currentTab === constants.tabId.Statistics) {
+        return;
+    }
+
+    player.currentTab = constants.tabId.Statistics;
+    fillStatistics();
 	fillLeaderboard();
 
-	openTab(event, 'statisticsTab');
+	openTab(event, constants.tabId.Statistics);
 }

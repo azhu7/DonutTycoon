@@ -6,5 +6,10 @@
 
 /** Open settings tab. */
 function openSettings(event) {
-	openTab(event, 'settingsTab');
+	if (player.currentTab === constants.tabId.Settings) {
+        return;
+    }
+
+    player.currentTab = constants.tabId.Settings;
+	openTab(event, constants.tabId.Settings);
 }

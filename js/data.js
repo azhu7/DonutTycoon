@@ -64,7 +64,7 @@ function Player() {
 	this.unlockedDonuts = new Set();  // Unlocked donut ids
 	this.lockedDonuts = new Set([...Array(constants.donuts.length).keys()]);  // Locked donut ids
 	this.sellPrices = [];  // Remember selected
-	this.quantities = new Array(constants.donuts.length).fill(0);  // Track current quantities
+	this.remainingQuantities = new Array(constants.donuts.length).fill(0);  // Track current quantities
 	this.selectedQuantities = new Array(constants.donuts.length).fill(0);  // Remember selected
 
 	// Default initialize donut trackers
@@ -82,11 +82,16 @@ function Player() {
 	this.customerHunger = 1;	  // Influences # donuts customer buys
 	this.customerReconsider = 1;  // # times customer "rerolls" on unavailable donuts
 
+	// Statistics
+	this.donutsMade = 0;
+	this.donutsSold = 0;
+
 	// Other
 	this.name = "Shooby's Donut Shop";
 	this.feedTotalTime = 4000;  // Time for feed to run
 	this.maxCustomerFeedDelay = 500;
 	this.saveIntervalId = null;  // Save this id to cancel when wiping player
+	this.currentTab = null;  // Save current tab to avoid redundant reloading
 }
 
 /** Other donut shops and their revenues. */
@@ -143,6 +148,14 @@ var constants = {
 			return `$${constants.upgrades[constants.upgradeId.Support].effect()}`;
 		},
 	},
+
+	tabId: Object.freeze({
+		DonutShop:"donutShopTab",
+		Upgrades:"upgradesTab",
+		Statistics:"statisticsTab",
+		Profile:"profileTab",
+		Settings:"settingsTab"
+	}),
 
 	names: ["Alex","Benicia","Umar","Davide","Danilo","Clayton","Brenden","Iacov","Dayne","Stuart","Kavin","Frankie-Ray","Amanjeet","Chidozie","Leonard","Shae","Jacek","Loic","Ayan","Alfie-John","Henry","Baljeet","Abdul-Nafi","Niko","Kornel","Muhammed","Jann","Abdelrahman","Bassiru","Cairn","Dayle","Lucas","Carlos","Franco","Malachi","Emilis","Ryan","Coire","Milosz","Jesse","Nicol","Anthony","Rohan","Cody-James","Calder","Samir","Bourdieu","Iman","Rhyan","Lloyd","Rory","Montgomery","Gerard","Caillan","Haider","Gray","Fallon","Rico","Erlend","Santiago","Yuan","Brandon","Graeme","Gedeon","Simon","Emile","Cruze","Shane","Kal","Arun","Daryl","Charlie","Amadou","Khai","Padraig","Arian","Abdul-Hakim","Braeden","Connal","Ilyas","Antoni","Darach","Rhuari","Keanu","Ted","Argyle","Hudson","Ifeanyichukwu","Barri","Emre","Zachary","Kaiden","Shayan","Tobias","Ideachi","Arne","Kieren","Scot","Mario","Dariusz","Winston","Arnav","Sebastian","Bryan","Innes","Nataniel","Aaston","Maxim","Troy","Bertram","Faris","Zakariya","Jake","Arshveer","Dainton","Aadyn","Clement","Aniket","Fletcher","Adhvik","Cass","Kalvyn","Alan-John","Areen","Cruize","Brennan","Arda","Aleksejs","Jorden","Fergie","Ernie","Findley","Jaivon","Kuba","Kier","Ray","Fardin","Usman","Rayaan","Aethan","Caydin","Timothy","Ignac","Dayn","Rocco","Conan","Jase-James","Emil","Jay","Christian","Dimitri","Dirko","Rehan","Elliot","Douglas","Kelvin","Chace","Travis","Eduard","Daegan","Brodyn","Braiden","Boden","Darren","Beau","Fearghal","Alexandru","Keagan","Fionan","Ryaan","Aymen","Ritchie","Ayaan","Madden","Lleyton","Keaton","Kalvin","Jaelyn","Kyren","Farrell","Steven","Deimantas","Morgan","Erin","Ahron","Lewis","Jared","Clae","Collin","Kain","Dorian","Fawwaz","Axel","Leo","Evan","Cooper","Fionnlagh","Derek","Jacen","Aidi","Blue","Thomas","Aleksander","Kristopher","Aidan","Vojtech","Wiktor","Casch","Aditya","Kael","Cailean","Geordie","Koby","Kirk","Bartlomiej","Orhan","Abdulrahim","Kerr","Kaden","Emirhan","Nelson","Claude","Abedraouf","Davie","Ossian","Ethan","Aqil","Mckinley","Leighton","Abobaker","Colby","Ahmad","Bobby-Joe","Faraj","Luc","Arshia","Jun","Elliott","Ellis","Gregory","Ameer","Gregoire","Jaxson","Harigovind","Dominic","Seamus","Rannoch","Dominykas","Aneirin","Konnor","Harrison-Blake","Adel","Dane","Igors","Kyan","Gio","Dominiks","Yuri","Andy","Alistair","Saul","Murray","Mieszko","Deklan","Hani","Zenon","Zakaria","Anmol","Thomas-James","Kabir","D'arcy","Evann","Gavin","Alisdair","Henley","Cox","Harley","Ashraf","Jia","Andrius","Stanislaw","Kole","Lochlan","Kelan","Dhruv","Aidan-Scott","Olli","Amir","Isaak","Jamey","Taylor","Adnan","Benedict","Derrak","Ajay","Corbie","Iulian","Izak","Anjan","Aliyan","Dawoud","Joe","Ross","Efetobore","Luka","Ash","Hashir","Jak","Yusuf","Cyril","Gaetano","Alasdhair","Jaydn","Hasan","Rossi","Deacan","Cornelius","Codyn","Chetanveer","Clinton","Abraham","Abdul","Gabrielius","Husnain","Ian","Dani","Jonasz","Drew","Fayaaz","Aki","Seth","Braidyn-Drew","Carrson","Rylie","Sameer","Ruaraidh","Brodie-Alexander","Marcel","Alwyn","Joss","Elio","Austyn","Brooklyn","Arhab","Maxwell","Gurseerit","Ayibatonye","Millar","Hunter","Leonid","Bodhi","Ezra","Oliver","Kenzi","Abubakar","Dayu","Emir","Hamzah","Callaghan","Igor","Anthony-John","Zac","Lukasz","Keiran","Kell","Greig","Blaike","Eden-Lionell","Maximus","Vaughn","Bryce","Jailyn","Ziyad","Cadan","Huck","Berk","Zak","Zachariah","Crawford","Abel","Kingsley","Keiron","Kobi","Ihsan","Buddy","Scott","Isaac","Codey","Hakki","Neil","Dubhglas","Avery","Eliot","Anayat","Syed","Shaye","Anamol","Kaleb","Issam","Cyrus","Clivejakson","Adley","Dillan","Henrik","Gleb","Ekam","Daanish","Digby","Dev","Jayme","Ismaeel","Flyn","Amrit","Dilbagh","Kevin","Ramin","Arden","Conor","Mohammed","Chaitanya","Daley","Jozef","Abhiram","Finnley","Wen","Albert","Odin","Musa","Bobby","Affan","Floyd","Hendrix","Olaf","Andrea","Eray","Ashton","Dalton","Joseph","Calvyn","Amine","Ronnie","Reigan","Cobie","Abdul-Rehman","Bailey","Finlaggan","Freddie","Klay","Jacob-John","Caeden","Areeb","Antonio","Abdurrhman","Lachlan","Jacko-Square","Drever","Henrique","Toby","Adhamh","Cailin","Kody","Eason","Calam","Armaghan","Miles","Corrigan","Jagjeevan","Hugo","Adil","Sylvan","Hank","Zane","Matt","Piotr","Callen","Jahan","Jago","Ralph","Abdirahman","Janek","Edidiong","Amiogho","Jarvie","Andres","Brodi","Muir","Gursharan","Diarmuid","Fareiz","Wilfred","Al-Houssen","Denzel","Johnnie","Caelan","Jenson","Emmanuel","Archie-Jay","Cael","Coben","Malcolm","John-Paul","Travi"],
 

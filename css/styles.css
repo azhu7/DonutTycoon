@@ -181,16 +181,23 @@ a, a:visited, a:hover, a:active {
 /** End Upgrade Tab */
 /** Begin Statistics Tab */
 
-#metricsColumn {
+#statisticsColumn {
 	background-color: #fff0f5;
 	text-align: center;
-	flex: 60%;
+	flex: 50%;
+}
+
+#statisticsContent {
+	margin-left: 5%;
+	margin-right: 5%;
+	min-width: 90%;
+	text-align: left;
 }
 
 #leaderboardColumn {
 	background-color: #f0f8ff;
 	text-align: center;
-	flex: 40%;
+	flex: 50%;
 }
 
 #leaderboardContent {

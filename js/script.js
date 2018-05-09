@@ -122,8 +122,6 @@ function initApplication() {
     $("#header").html(player.name);
     $("#versionNum").html(constants.version);
 
-    refreshUpgradeTab();
-
     // Start at night
     startNight();
 

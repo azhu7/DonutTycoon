@@ -187,7 +187,21 @@ function refreshUpgradeTab() {
 
 /** Open upgrades tab. */
 function openUpgrades(event) {
-    saveDonutSelection();
+    if (typeof this.curMoney === "undefined") {
+        this.curMoney = null;
+    }
 
-    openTab(event, 'upgradesTab');
+    if (player.currentTab === constants.tabId.Upgrades) {
+        return;
+    }
+
+    player.currentTab = constants.tabId.Upgrades;
+
+    // Only refresh columns if player's money has changed.
+    if (player.money != this.curMoney) {
+        this.curMoney = player.money;
+        refreshUpgradeTab();
+    }
+
+    openTab(event, constants.tabId.Upgrades);
 }

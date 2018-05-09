@@ -28,6 +28,7 @@ function load() {
 	logger.info("load(): Loading player.");
 	$.extend(true, player, JSON.parse(localStorage.getItem(constants.savedPlayer)));
 	fixLoadedObjects();
+	player.currentTab = null;  // Clear this so that first tab always loads
 	logger.info("load(): Loaded player.");
 	logger.info({player: player});
 }

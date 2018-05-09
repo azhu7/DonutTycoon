@@ -85,6 +85,7 @@ function Player() {
 	// Statistics
 	this.donutsMade = 0;
 	this.donutsSold = 0;
+	this.customersServed = 0;
 
 	// Other
 	this.name = "Shooby's Donut Shop";
@@ -95,7 +96,7 @@ function Player() {
 }
 
 /** Other donut shops and their revenues. */
-var shops = [
+/*var shops = [
 	["Dooby Donuts", 1337],
 	["Ypsilanti Dairy", 900],
 	["Crunchy Creme", 740],
@@ -104,6 +105,11 @@ var shops = [
 	["Bob's Bakery", 224],
 	["Ratch Donuts", 42.42],
 	["Ohio's Best Donuts", 4.44]
+];*/
+
+var shops = [
+	["Dooby Donuts", 51.41],
+	["Happy Chappy", 20]
 ];
 
 /** Constants. */
@@ -153,7 +159,7 @@ var constants = {
 		DonutShop:"donutShopTab",
 		Upgrades:"upgradesTab",
 		Statistics:"statisticsTab",
-		Profile:"profileTab",
+		World:"worldTab",
 		Settings:"settingsTab"
 	}),
 

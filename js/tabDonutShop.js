@@ -231,13 +231,13 @@ async function simulateDay() {
     // Hide button until day is over
     $("#startButton").hide();
     var numCustomers = Math.ceil(constants.upgrades[constants.upgradeId.Shop].effect() * constants.upgrades[constants.upgradeId.Popularity].effect());
-    logger.info(`simlateDay(): # Customers: ${numCustomers}.`);
+    logger.info(`simulateDay(): # Customers: ${numCustomers}.`);
 
     var customerFeedDelayTime = Math.min(player.feedTotalTime / numCustomers, player.maxCustomerFeedDelay);
     
     // Track this to end day early when out of donuts
     var totalDonuts = player.remainingQuantities.reduce((accumulator, currentVal) => accumulator + currentVal);
-    logger.info(`simlateDay(): Starting with ${totalDonuts} donuts.`);
+    logger.info(`simulateDay(): Starting with ${totalDonuts} donuts.`);
     player.donutsMade += totalDonuts;  // Track stats
 
     for (var i = 0; i < numCustomers; ++i) {
@@ -252,6 +252,7 @@ async function simulateDay() {
             var totalSpent = numBought * player.sellPrices[donutId];
             totalDonuts -= numBought;
             player.donutsSold += numBought;  // Track stats
+            player.customersServed++;
             $("#feedContent").append(`${name} bought ${numBought} ${donutName} Donut(s) for $${displayMoney(totalSpent)}.<br/>`);
         }
         else {
@@ -270,7 +271,7 @@ async function simulateDay() {
     }
     
     $("#startButton").show();
-    logger.info(`simlateDay(): Ended day with ${totalDonuts} donuts remaining.`);
+    logger.info(`simulateDay(): Ended day with ${totalDonuts} donuts remaining.`);
 
     // Apply end of day effects.
     // Important because on load, we always start at night, so if player exits
@@ -279,9 +280,15 @@ async function simulateDay() {
     player.day += 1;
     player.money += constants.upgrades[constants.upgradeId.Support].effect();
     player.money = roundMoney(player.money);
-    fillLeaderboard();  // Update leaderboard at the end of the day
-    logger.info(`startDay(): Ending day. Day is now ${player.day}.`);
-    logger.info(`startDay(): Applying passive income. Player now has $${player.money}.`);
+    iterateOtherShops();
+    var win = fillLeaderboard();  // Update leaderboard at the end of the day
+    logger.info(`simulateDay(): Ending day. Day is now ${player.day}.`);
+    logger.info(`simulateDay(): Applying passive income. Player now has $${player.money}.`);
+
+    if (win) {
+    	logger.info(`simulateDay(): Player won! Transitioning to world tab.`);
+    	$("#worldTabButton").click();
+    }
 }
 
 /** Increment money for other donut shops. */
@@ -329,7 +336,6 @@ function startDay() {
 
     logger.info("startDay(): Done setting up day.");
     simulateDay();  // async
-    iterateOtherShops();
 }
 
 /** Switch to night view. */

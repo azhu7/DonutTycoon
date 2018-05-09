@@ -27,7 +27,7 @@
 				<button class="tablinks active" onclick="openDonutShop(event)" id="defaultOpen">Donut Shop</button>
 				<button class="tablinks" onclick="openUpgrades(event);">Upgrades</button>
 				<button class="tablinks" onclick="openStatistics(event);">Statistics</button>
-				<button class="tablinks" onclick="openProfile(event);">Profile</button>
+				<button id="worldTabButton" class="tablinks" onclick="openWorld(event);">World</button>
 				<button class="tablinks" onclick="openSettings(event);">Settings</button>
 			</div>
 			<!-- End Tabs -->
@@ -256,6 +256,7 @@
 				</div>
 				<div id="leaderboardColumn" class="column boxed">
 					<h2 id="leaderboardHeader">Leaderboard</h2>
+					<p id="winText"></p>
 					<table id="leaderboardContent">
 						<tbody>
 							<tr>
@@ -286,8 +287,8 @@
 			</script>
 			<!-- End Statistics -->
 			<!-- Begin Profile -->
-			<div id="profileTab" class="tabcontent row">
-				Profile Tab
+			<div id="worldTab" class="tabcontent row">
+				World Tab
 			</div>
 			<!-- End Profile -->
 			<!-- Begin Settings -->
@@ -312,7 +313,7 @@
 		<script src="js/tabDonutShop.js"></script>
 		<script src="js/tabUpgrades.js"></script>
 		<script src="js/tabStatistics.js"></script>
-		<script src="js/tabProfile.js"></script>
+		<script src="js/tabWorld.js"></script>
 		<script src="js/tabSettings.js"></script>
 		<script src="js/storage.js"></script>
 		<script src="js/script.js"></script>

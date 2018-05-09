@@ -10,13 +10,18 @@ function fillStatistics() {
 	$("#statisticsContent > tbody").empty();
 	var statisticsEntries = [];
 	statisticsEntries.push(statisticsEntryTemplate({
-		description: "Total donuts made:",
+		description: "Donuts made:",
 		amount: player.donutsMade
 	}));
 
 	statisticsEntries.push(statisticsEntryTemplate({
-		description: "Total donuts sold:",
+		description: "Donuts sold:",
 		amount: player.donutsSold
+	}));
+
+	statisticsEntries.push(statisticsEntryTemplate({
+		description: "Customers served:",
+		amount: player.customersServed
 	}));
 
 	statisticsEntries.forEach(entry => $("#statisticsContent > tbody").append(entry));
@@ -31,6 +36,7 @@ function compareDonutShop(lhs, rhs) {
  * Populate leaderboard.
  * The leaderboard becomes out-of-date at the end of each day and whenever the
  * player changes their amount of money (e.g., from buying upgrades).
+ * @return {bool} True if player is at top of the leaderboard.
  */
 function fillLeaderboard() {
 	if (typeof this.curDay === "undefined") {
@@ -61,6 +67,14 @@ function fillLeaderboard() {
 	this.curPlayerName = player.name;
 	var leaderboard = shops.concat([[player.name, player.money]]);
 	leaderboard.sort(compareDonutShop);
+	var win = leaderboard[0][0] === player.name;
+
+	if (win) {
+		$("#winText").text("You topped the leaderboard! Head to the World tab to continue.");
+	}
+	else {
+		$("#winText").text("");
+	}
 	
 	// Remove all except header row
 	var v = $("#leaderboardContent");
@@ -77,6 +91,8 @@ function fillLeaderboard() {
 	}
 
 	logger.info("fillLeaderboard(): Filled leaderboard.");
+	logger.info(`fillLeaderboard(): Player won? ${win}`);
+	return win;
 }
 
 /** Open statistics tab. */
